@@ -86,7 +86,6 @@
           :data="content2[ filename ]"
           :title="'Rev2'"
         />
-
       </div>
     </div>
   </div>
@@ -95,7 +94,6 @@
 <script>
 
 import VueBootstrapTypeahead from './components/VueBootstrapTypeahead.vue';
-import MemberDiff from './components/MemberDiff.vue';
 import WarningErrorMembers from './components/WarningErrorMembers.vue';
 import * as justDiff from 'just-diff';
 
@@ -108,7 +106,6 @@ export default {
 
 	components: {
 		VueBootstrapTypeahead,
-		MemberDiff,
 		WarningErrorMembers
 	},
 
@@ -213,40 +210,40 @@ export default {
 
 		diff: function () {
 
-            if ( this.filename && this.revision1 && this.revision2 ) {
+			if ( this.filename && this.revision1 && this.revision2 ) {
 
-                if ( this.content1[ this.filename ] && this.content2[ this.filename ] ) {
+				if ( this.content1[ this.filename ] && this.content2[ this.filename ] ) {
 
-                    const contentDiff = justDiff.diff( this.content1[ this.filename ], this.content2[ this.filename ] );
+					const contentDiff = justDiff.diff( this.content1[ this.filename ], this.content2[ this.filename ] );
 
-                    let copy = JSON.parse( JSON.stringify( this.content2[ this.filename ] ) );
+					let copy = JSON.parse( JSON.stringify( this.content2[ this.filename ] ) );
 
-                    for ( const change of contentDiff ) {
+					for ( const change of contentDiff ) {
 
-                        if ( change.path.length !== 3 )
-                            console.error( 'path.length !== 3' );
-                        else {
+						if ( change.path.length !== 3 )
+							console.error( 'path.length !== 3' );
+						else {
 
-                            // temp hack
-                            copy[ change.path[ 0 ] ][ change.path[ 1 ] ][ change.path[ 2 ] ] =
+							// temp hack
+							copy[ change.path[ 0 ] ][ change.path[ 1 ] ][ change.path[ 2 ] ] =
                                 '<span class="bg-warning">[' + change.op + ']</span> ' +
                                 this.content1[ this.filename ][ change.path[ 0 ] ][ change.path[ 1 ] ][ change.path[ 2 ] ];
 
-                        }
+						}
 
-                    }
+					}
 
-                    console.log( copy );
+					console.log( copy );
 
-                    return copy;
+					return copy;
 
-                }
+				}
 
-                return { error: `Diff failed, content is missing`, warning: false, onlyDecl: [], onlySource: [] };
-                
-            }
+				return { error: `Diff failed, content is missing`, warning: false, onlyDecl: [], onlySource: [] };
 
-            return { error: false, warning: false, onlyDecl: [], onlySource: [] };
+			}
+
+			return { error: false, warning: false, onlyDecl: [], onlySource: [] };
 
 		}
 
@@ -382,7 +379,7 @@ export default {
 				// add new revision to history
 				this._pushHistory();
 
-                // initialise content
+				// initialise content
 				this.content2 = await this._fetchFilesOfRevision( this.revision2 );
 				this.files2 = Object.keys( this.content2 );
 
@@ -415,7 +412,7 @@ export default {
 
 					// const diff = this.counts1[ filename ] - this.counts2[ filename ];
 
-                    return { class: 'badge-success', text: 'Changes!' };
+					return { class: 'badge-success', text: 'Changes!' };
 					// if ( diff > 0 )
 					// 	return { class: 'badge-success', text: '<< ' + diff };
 					// else if ( diff < 0 )

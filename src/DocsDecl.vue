@@ -111,7 +111,7 @@
           </template>
 
           <template v-else>
-<!--             <MemberDiff
+            <!--             <MemberDiff
               :content-obj="content1[ filename ]"
               :translation-table="shortnameToTableCaption"
               title="Properties"
@@ -123,11 +123,11 @@
               title="Methods"
               member-name="methods"
             /> -->
-		<WarningErrorMembers
-          v-if="typeof content1[ filename ] !== 'undefined'"
-          :data="content1[ filename ]"
-          :title="'Rev1'"
-        />
+            <WarningErrorMembers
+              v-if="typeof content1[ filename ] !== 'undefined'"
+              :data="content1[ filename ]"
+              :title="'Rev1'"
+            />
           </template>
         </template>
       </div>
@@ -137,7 +137,6 @@
 
 <script>
 
-import MemberDiff from './components/MemberDiff.vue';
 import VueBootstrapTypeahead from './components/VueBootstrapTypeahead.vue';
 import WarningErrorMembers from './components/WarningErrorMembers.vue';
 
@@ -150,7 +149,6 @@ export default {
 
 	components: {
 		VueBootstrapTypeahead,
-		MemberDiff,
 		WarningErrorMembers
 	},
 
@@ -302,7 +300,7 @@ export default {
 				// add new revision to history
 				this._pushHistory();
 
-                // initialise content
+				// initialise content
 				this.content2 = await this._fetchFilesOfRevision( this.revision2 );
 				this.files2 = Object.keys( this.content2 );
 
@@ -313,7 +311,7 @@ export default {
 			}
 
 		},
-/* 		loadFile( sha ) {
+		/* 		loadFile( sha ) {
 
 			// return fetch( `https://raw.githubusercontent.com/mrdoob/three.js/${sha}/${filename}` )
 			return fetch( `${API_URL}/ddd-viewer/showFile/${sha}` )
@@ -350,7 +348,7 @@ export default {
 				.catch( err => console.error( err ) );
 
 		},
-/* 
+		/*
 		changeRevision() {
 
 			this.files = [];
