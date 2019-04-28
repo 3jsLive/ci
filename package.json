@@ -1,0 +1,43 @@
+{
+  "name": "3jsservices-interface",
+  "version": "0.1.0",
+  "description": "",
+  "repository": "",
+  "author": "3botjs",
+  "license": "MIT",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "bootstrap": "^4.3.1",
+    "jquery": "^3.3.1",
+    "just-diff": "^2.2.0",
+    "popper.js": "^1.14.7",
+    "resize-observer-polyfill": "^1.5.1",
+    "vue": "^2.6.6",
+    "vue-router": "^3.0.6",
+    "vue-virtual-scroller": "^1.0.0-rc.2"
+  },
+  "devDependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "glob": "^7.1.3",
+    "shelljs": "^0.8.3",
+    "nodegit": "^0.24.1",
+    "typescript": "^3.4.4",
+    "nodemon": "^1.18.10",
+    "@vue/cli": "^3.6.3",
+    "@vue/cli-plugin-babel": "^3.4.0",
+    "@vue/cli-plugin-eslint": "^3.4.0",
+    "@vue/cli-service": "^3.4.0",
+    "babel-eslint": "^10.0.1",
+    "html-webpack-plugin": "^3.2.0",
+    "eslint": "^5.8.0",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-vue": "^5.0.0",
+    "eslint-config-mdcs": "^4.2.3",
+    "vue-template-compiler": "^2.5.21"
+  }
+}

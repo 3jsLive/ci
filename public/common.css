@@ -1,0 +1,37 @@
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0 5px 0 5px;
+}
+li.selected,
+span.selected {
+  background: black;
+  color: white;
+}
+pre {
+  border-radius: 0;
+  white-space: pre-wrap;
+  word-break: normal;
+  word-wrap: normal;
+  tab-size: 4;
+  counter-reset: line;
+}
+pre span.numline {
+  display: block;
+  line-height: 1.5rem;
+}
+pre span.numline:before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  border-right: 1px solid #ddd;
+  padding: 0 .5em;
+  margin-right: .5em;
+  color: #888;
+}
+li.errorcategory {
+  list-style: none;
+}
+#app { height: 100vh }

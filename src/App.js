@@ -1,0 +1,38 @@
+import Vue from 'vue';
+
+import 'jquery';
+import 'popper.js';
+
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import App from './App.vue';
+import docsdecl from './DocsDecl.vue';
+import srcdecl from './SrcDecl.vue';
+import objdecl from './ObjDecl.vue';
+
+import VueRouter from 'vue-router';
+
+const routes = [
+	{ path: '/docsdecl/:firstRev?/:secondRev?', component: docsdecl, name: 'docsdecl' },
+	{ path: '/srcdecl/:firstRev?/:secondRev?', component: srcdecl, name: 'srcdecl' },
+	{ path: '/objdecl/:firstRev?/:secondRev?', component: objdecl }
+];
+
+Vue.use( VueRouter );
+
+const router = new VueRouter( {
+	linkActiveClass: 'active',
+	routes
+} );
+
+Vue.config.productionTip = false;
+
+Vue.prototype.$eventBus = new Vue();
+
+const app = new Vue( {
+	render: h => h( App ),
+	router
+} ).$mount( '#app' );
+
+console.log( { app } );
