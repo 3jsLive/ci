@@ -19,7 +19,12 @@ const objdecl = resolve => require( [ './ObjDecl.vue' ], resolve );
 
 
 const routes = [
-	{ path: '/docsdecl/:firstRev?/:secondRev?', component: docsdecl, name: 'docsdecl' },
+	{
+		path: '/docsdecl/:firstRev?/:secondRev?',
+		component: docsdecl,
+		name: 'docsdecl',
+		props: ( route ) => ( { filename: route.query.filename, revision1: route.params.firstRev, revision2: route.params.secondRev } )
+	},
 	{ path: '/srcdecl/:firstRev?/:secondRev?', component: srcdecl, name: 'srcdecl' },
 	{ path: '/objdecl/:firstRev?/:secondRev?', component: objdecl }
 ];
