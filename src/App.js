@@ -7,11 +7,16 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import App from './App.vue';
-import docsdecl from './DocsDecl.vue';
-import srcdecl from './SrcDecl.vue';
-import objdecl from './ObjDecl.vue';
+// import docsdecl from './DocsDecl.vue';
+// import srcdecl from './SrcDecl.vue';
+// import objdecl from './ObjDecl.vue';
 
 import VueRouter from 'vue-router';
+
+const docsdecl = resolve => require( [ './DocsDecl.vue' ], resolve );
+const srcdecl = resolve => require( [ './SrcDecl.vue' ], resolve );
+const objdecl = resolve => require( [ './ObjDecl.vue' ], resolve );
+
 
 const routes = [
 	{ path: '/docsdecl/:firstRev?/:secondRev?', component: docsdecl, name: 'docsdecl' },
