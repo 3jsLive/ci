@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="row mb-5 justify-content-center">
-      <div class="col">
+      <div class="col-6">
         <vue-bootstrap-typeahead
           ref="search1"
           v-model="selectedRev1"
@@ -22,19 +22,6 @@
           placeholder="works: SHA, TODO: HEAD, <branch>, <PR id>"
           prepend="Revision 1"
         />
-        <!-- <vue-bootstrap-typeahead
-          ref="search1"
-          v-model="revision1"
-          :data="revisions"
-          :min-matching-chars="0"
-          :max-matches="revisions.length"
-          size="sm"
-          placeholder="works: SHA, TODO: HEAD, <branch>, <PR id>"
-          prepend="Revision 1"
-          @hit="changeRevision1()"
-        /> -->
-      </div>
-      <div class="col">
         <vue-bootstrap-typeahead
           ref="search2"
           v-model="selectedRev2"
@@ -46,19 +33,69 @@
           :placeholder="secondRevPlaceholder"
           prepend="Revision 2"
         />
-        <!-- <vue-bootstrap-typeahead
-          ref="search2"
-          v-model="revision2"
-          :data="revisions"
-          :min-matching-chars="0"
-          :max-matches="revisions.length"
-          size="sm"
-          :disabled="secondRevDisabled"
-          :placeholder="secondRevPlaceholder"
-          prepend="Revision 2"
-          @hit="changeRevision2()"
-        /> -->
       </div>
+      <div class="col">
+        <div class="form-check form-check-inline">
+          <input
+            id="radioShowAll"
+            v-model="radioShow"
+            class="form-check-input"
+            type="radio"
+            value="all"
+            checked
+          >
+          <label
+            class="form-check-label"
+            for="radioShowAll"
+          >
+            Show all
+          </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            id="radioShowDiffs"
+            v-model="radioShow"
+            class="form-check-input"
+            type="radio"
+            value="diffs"
+          >
+          <label
+            class="form-check-label"
+            for="radioShowDiffs"
+          >
+            Show only differences
+          </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            id="radioShowErrors"
+            v-model="radioShow"
+            class="form-check-input"
+            type="radio"
+            value="errors"
+          >
+          <label
+            class="form-check-label"
+            for="radioShowErrors"
+          >
+            Show only errors and warnings
+          </label>
+        </div>
+      </div>
+      <!-- <div class="col">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="checkDiffThoseTwo">
+          <label class="form-check-label" for="checkDiffThoseTwo">
+            Diff those two
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="checkFoo">
+          <label class="form-check-label" for="checkFoo">
+            Foo
+          </label>
+        </div>
+      </div> -->
     </div>
     <div
       id="content"
@@ -69,28 +106,34 @@
         class="h-100 d-flex flex-column align-items-center"
       >
         <div class="row">
-          <form class="form-inline">
+          <div class="input-group mb-1 input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Filename</span>
+            </div>
             <input
               v-model="query"
-              class="form-control btn-sm"
-              type="text"
-              placeholder="Type to filter files by name..."
+              type="search"
+              class="form-control"
+              placeholder="Type to filter by name"
             >
-            <button
-              type="button"
-              class="form-control btn-sm"
-              @click="query = ''"
-            >
-              Clear
-            </button>
-          </form>
+            <!-- <div class="input-group-append">
+              <button
+                id="button-clear-filter"
+                class="btn btn-outline-secondary"
+                type="button"
+                @click="query = ''"
+              >
+                Clear
+              </button>
+            </div> -->
+          </div>
         </div>
         <div
           id="files-container"
-          class="row overflow-auto"
+          class="row overflow-auto vh-100 border"
         >
           <ul
-            class="list-group list-group-flush bg-primary h-100"
+            class="list-group list-group-flush h-100"
             style="min-width: 440px"
           >
             <button
@@ -176,16 +219,15 @@ export default {
 		return {
 			query: '',
 
+			radioShow: 'all',
+
 			content1: '',
 			content2: '',
 
-			// revision1: '',
-			// revision2: '',
 			selectedRev1: '',
 			selectedRev2: '',
 			revisions: [],
 
-			// filename: '',
 			selectedFilename: '',
 
 			shortnameToTableCaption: {
@@ -209,6 +251,24 @@ export default {
 		files2: function () {
 
 			return Object.keys( this.content2 ) || [];
+
+		},
+
+		selectionShowAll: function () {
+
+			return this.radioShow === 'all';
+
+		},
+
+		selectionShowDiffs: function () {
+
+			return this.radioShow === 'diffs';
+
+		},
+
+		selectionShowErrors: function () {
+
+			return this.radioShow === 'errors';
 
 		},
 
@@ -263,12 +323,60 @@ export default {
 
 		queryMatches: function () {
 
-			if ( this.query.length > 0 )
-				return this.files1
+			// first: apply query filter
+			let matches;
+			if ( this.query.length > 0 ) {
+
+				matches = this.files1
+
+					// filter by actual matches (case insensitive)
 					.filter( name => name.toLowerCase().includes( this.query.toLowerCase() ) )
+
+					// highlight query-hits
 					.map( name => ( { raw: name, markup: name.replace( new RegExp( '(' + this.query + ')', 'gi' ), '<b>$1</b>' ) } ) );
-			else
-				return this.files1.map( name => ( { raw: name, markup: name } ) );
+
+			} else {
+
+				// or don't, just adapt to expected format
+				matches = this.files1.map( name => ( { raw: name, markup: name } ) );
+
+			}
+
+
+			// then: filter by "Show $foo" choice
+			return matches
+
+				// if "Show only differences" is selected, filter out all non-diffs
+				.filter( entry => {
+
+					if ( this.selectionShowDiffs ) {
+
+						if ( this.diffCounter[ entry.raw ] > 0 )
+							return true;
+						else
+							return false;
+
+					}
+
+					return true;
+
+				} )
+
+				// if "Show only errors and warnings" is selected, filter out all non-errs
+				.filter( entry => {
+
+					if ( this.selectionShowErrors ) {
+
+						if ( this.fileHasErrorOrWarning( entry.raw ) )
+							return true;
+						else
+							return false;
+
+					}
+
+					return true;
+
+				} );
 
 		},
 
@@ -303,18 +411,14 @@ export default {
 
 		diff: function () {
 
-			this.revision1;
-			this.revision2;
-			this.content1;
-			this.content2;
+			if ( this.revision1 &&
+				this.revision2 &&
+				this.content1 &&
+				this.content2
+			)
+				return justDiff.diff( this.content1, this.content2 );
 
-			if ( ! this.revision1 || ! this.revision2 )
-				return [];
-
-			if ( ! this.content1 || ! this.content2 )
-				return [];
-
-			return justDiff.diff( this.content1, this.content2 );
+			return [];
 
 		},
 
@@ -400,6 +504,10 @@ export default {
 			if ( ! this.diff || this.diff.length === 0 )
 				return {};
 
+			// HACK this hasn't been init'ed fully yet
+			if ( Object.keys( this.content1 ).includes( 'Loading...' ) || Object.keys( this.content2 ).includes( 'Loading...' ) )
+				return {};
+
 			return this.diff.reduce( ( all, current ) => {
 
 				const filename = current.path[ 0 ];
@@ -416,22 +524,6 @@ export default {
 	},
 
 	watch: {
-
-		filename: function ( f ) {
-
-			console.log( 'filename watcher', this.filename, f );
-
-			if ( ! f || f.length === 0 ) {
-
-				this.$router.push( { path: this.$route.fullPath } );
-
-			} else {
-
-				this.$router.push( { path: this.$route.fullPath, query: { filename: f } } );
-
-			}
-
-		},
 
 		// selected first revision changed, update nagivation
 		selectedRev1: function ( /* rev */ ) {
@@ -548,6 +640,10 @@ export default {
 
 		this.pullRevisions();
 
+		this.selectedRev1 = this.revision1;
+		this.selectedRev2 = this.revision2;
+		this.selectedFilename = this.filename;
+
 		this.changeRevision1();
 		this.changeRevision2();
 
@@ -555,28 +651,27 @@ export default {
 
 	methods: {
 
+		fileHasErrorOrWarning( name ) {
+
+			if ( this.content1[ name ] &&
+				( this.content1[ name ].error !== false || this.content1[ name ].warning !== false )
+			)
+				return true;
+
+			if ( this.content2[ name ] &&
+				( this.content2[ name ].error !== false || this.content2[ name ].warning !== false )
+			)
+				return true;
+
+			return false;
+
+		},
+
 		_fetchFilesOfRevision( rev ) {
 
 			return fetch( `${API_URL}/ddd-viewer/showFile/${rev}` )
 				.then( res => res.json() )
 				.catch( err => console.error( '_fetchFilesOfRevision: %o', err ) );
-
-		},
-
-		_pushHistory() {
-
-			if ( ! this.revision1 ) {
-
-				console.error( `Can't commit to history without revision1` );
-				return false;
-
-			}
-
-			const params = ( this.revision2 ) ? { firstRev: this.revision1, secondRev: this.revision2 } : { firstRev: this.revision1 };
-
-			this.$router.push( { name: 'docsdecl', params } );
-
-			return true;
 
 		},
 
