@@ -483,7 +483,7 @@ export default {
 				console.log( 'New file selected:', this.selectedFilename, 'old:', this.filename );
 
 				let params;
-				if ( this.revision2 ) params = { firstRev: this.revision1, secondRev: this.revision2 };
+				if ( this.revision2 && this.revision1 ) params = { firstRev: this.revision1, secondRev: this.revision2 };
 				else if ( this.revision1 ) params = { firstRev: this.revision1 };
 				else params = {};
 
@@ -499,7 +499,6 @@ export default {
 
 			this.selectedRev1 = this.revision1;
 
-			console.log( 'revision1 watcher', rev );
 			if ( rev && rev.length > 0 ) {
 
 				if ( ! this.content1 || Object.keys( this.content1 ).length === 0 ) {
@@ -522,7 +521,6 @@ export default {
 
 			this.selectedRev2 = this.revision2;
 
-			console.log( 'revision2 watcher', rev );
 			if ( rev && rev.length > 0 ) {
 
 				if ( ! this.revision1 )
@@ -546,43 +544,12 @@ export default {
 
 	},
 
-	beforeRouteUpdate( to, from, next ) {
-
-		console.log( { to } );
-
-		// this.revision1 = to.params.firstRev || '';
-		// this.revision2 = to.params.secondRev || '';
-		// this.filename = ( to.query ) ? to.query.filename : '';
-
-		next();
-
-	},
-
 	created() {
 
 		this.pullRevisions();
 
-		// this.$eventBus.$on( 'scrollme', this.scrollme ); // mounted()
-
-		// if ( this.$route.params.firstRev ) {
-
-		// this.revision1 = this.$route.params.firstRev;
-		this.changeRevision1( false );
-
-		// }
-
-		// if ( this.$route.params.secondRev ) {
-
-		// this.revision2 = this.$route.params.secondRev;
-		this.changeRevision2( false );
-
-		// }
-
-		// if ( this.$route.query.filename ) {
-
-		// this.filename = this.$route.query.filename;
-
-		// }
+		this.changeRevision1();
+		this.changeRevision2();
 
 	},
 
@@ -615,17 +582,12 @@ export default {
 
 		async changeRevision1() {
 
-			// this.filename = '';
 			this.content1 = '';
 
 			if ( this.revision1 ) {
 
 				// initialise content
 				this.content1 = await this._fetchFilesOfRevision( this.revision1 );
-
-			} else {
-
-				console.error( 'changeRevision1 > %o', this.revision1 );
 
 			}
 
@@ -653,36 +615,13 @@ export default {
 				// } );
 				// instance.$mount( '#files-container' );
 
-			} else {
-
-				console.error( 'changeRevision2 > %o', this.revision2 );
-
 			}
 
 		},
-		/* 		loadFile( sha ) {
-
-			// return fetch( `https://raw.githubusercontent.com/mrdoob/three.js/${sha}/${filename}` )
-			return fetch( `${API_URL}/ddd-viewer/showFile/${sha}` )
-				.then( res => res.json() )
-				.then( content => {
-
-					console.log( content );
-
-					return content;
-
-				} )
-				.catch( err => console.error( 'loadFile', sha, err ) );
-
-		}, */
 
 		pullRevisions() {
 
-			// this.revision1 = '';
-			// this.revision2 = '';
 			this.revisions = [];
-
-			// this.filename = '';
 
 			return fetch( `${API_URL}/ddd-viewer/revisions` )
 				.then( res => res.json() )
