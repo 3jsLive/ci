@@ -440,8 +440,12 @@ export default {
 
 				console.log( 'push to selected', this.selectedRev1, 'selected2/second', this.selectedRev2 || this.revision2, 'file', this.filename );
 
-				const params = ( this.revision2 ) ? { firstRev: this.selectedRev1, secondRev: this.revision2 } : { firstRev: this.selectedRev1 };
-				const query = ( this.filename ) ? { filename: this.filename } : {};
+				let params;
+				if ( this.revision2 && this.selectedRev1 ) params = { firstRev: this.selectedRev1, secondRev: this.revision2 };
+				else if ( this.selectedRev1 ) params = { firstRev: this.selectedRev1 };
+				else params = {};
+
+				const query = ( this.filename && this.selectedRev1 ) ? { filename: this.filename } : {};
 
 				this.$router.push( {
 					name: 'docsdecl',
@@ -459,8 +463,8 @@ export default {
 
 				console.log( 'push to first', this.revision1, 'selected2', this.selectedRev2, 'file', this.filename );
 
-				const params = ( this.selectedRev2 ) ? { firstRev: this.revision1, secondRev: this.selectedRev2 } : { firstRev: this.revision1 };
-				const query = ( this.filename ) ? { filename: this.filename } : {};
+				const params = ( this.selectedRev2 && this.revision1 ) ? { firstRev: this.revision1, secondRev: this.selectedRev2 } : { firstRev: this.revision1 };
+				const query = ( this.filename && this.revision1 ) ? { filename: this.filename } : {};
 
 				this.$router.push( {
 					name: 'docsdecl',
@@ -483,7 +487,7 @@ export default {
 				else if ( this.revision1 ) params = { firstRev: this.revision1 };
 				else params = {};
 
-				const query = ( this.selectedFilename ) ? { filename: this.selectedFilename } : {};
+				const query = ( this.selectedFilename && this.revision1 ) ? { filename: this.selectedFilename } : {};
 
 				this.$router.push( { name: 'docsdecl', params, query } );
 
@@ -492,6 +496,8 @@ export default {
 		},
 
 		revision1: async function ( rev ) {
+
+			this.selectedRev1 = this.revision1;
 
 			console.log( 'revision1 watcher', rev );
 			if ( rev && rev.length > 0 ) {
@@ -513,6 +519,8 @@ export default {
 		},
 
 		revision2: async function ( rev ) {
+
+			this.selectedRev2 = this.revision2;
 
 			console.log( 'revision2 watcher', rev );
 			if ( rev && rev.length > 0 ) {
