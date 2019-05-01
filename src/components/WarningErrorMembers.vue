@@ -67,7 +67,7 @@ export default {
 				'onlyDecl': 'Only in the declaration file',
 				'onlySource': 'Only in the source file',
 				'onlyDocs': 'Only in the docs',
-				'diff': 'Appears in both but with two (possibly) different types',
+				'diff': 'In both files but with two (possibly) different types',
 			} )
 		}
 	},
