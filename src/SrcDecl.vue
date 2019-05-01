@@ -410,15 +410,15 @@ export default {
 					return { class: 'badge-secondary', text: this.counts2[ filename ] + 'rev2 only' };
 				else if ( match1 === true && match2 === true ) {
 
-					// const diff = this.counts1[ filename ] - this.counts2[ filename ];
+					const diff = this.counts1[ filename ] - this.counts2[ filename ];
 
-					return { class: 'badge-success', text: 'Changes!' };
-					// if ( diff > 0 )
-					// 	return { class: 'badge-success', text: '<< ' + diff };
-					// else if ( diff < 0 )
-					// 	return { class: 'badge-danger', text: diff + ' >>' };
-					// else
-					// 	return { class: 'badge-secondary', text: '- 0 -' };
+					// return { class: 'badge-success', text: 'Changes!' };
+					if ( diff > 0 )
+						return { class: 'badge-success', text: '<< ' + diff };
+					else if ( diff < 0 )
+						return { class: 'badge-danger', text: diff + ' >>' };
+					else
+						return { class: 'badge-secondary', text: '- 0 -' };
 
 				}
 
