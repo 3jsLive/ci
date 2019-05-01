@@ -1,9 +1,10 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="container-fluid d-flex flex-column h-100">
     <div class="row flex-fill">
       <div class="col-12">
         <h1>
-          checks-lints-docs-decl-diff-viewer thingie<h6 style="display: inline">
+          Docs vs. Declarations<h6 style="display: inline">
             (en&amp;&amp;src only for now, no zh||examples)
           </h6>
         </h1>
