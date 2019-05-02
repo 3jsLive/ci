@@ -31,7 +31,12 @@ const routes = [
 		name: 'srcdecl',
 		props: ( route ) => ( { filename: route.query.filename, revision1: route.params.firstRev, revision2: route.params.secondRev } )
 	},
-	{ path: '/objdecl/:firstRev?/:secondRev?', component: objdecl }
+	{
+		path: '/objdecl/:firstRev?/:secondRev?',
+		component: objdecl,
+		name: 'objdecl',
+		props: ( route ) => ( { filename: route.query.filename, revision1: route.params.firstRev, revision2: route.params.secondRev } )
+	}
 ];
 
 Vue.use( VueRouter );
