@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <section>
     <h4 class="text-center text-capitalize">
@@ -18,8 +19,8 @@
             </tr>
           </thead>
           <tbody>
-            <template v-for="( mem, index ) in contentObj[ shortname ][ memberName ]">
-              <tr :key="`${JSON.stringify( mem )}-${index}`">
+            <template v-for="( mem, index2 ) in contentObj[ shortname ][ memberName ]">
+              <tr :key="`${JSON.stringify( mem )}-${index2}`">
                 <td
                   align="center"
                   v-html="format( mem )"
@@ -55,7 +56,7 @@ export default {
 		ignoredNames: {
 			type: Array,
 			required: false,
-			default: ( ) => [ 'error', 'warning' ]
+			default: ( ) => [ 'error', 'warning', 'class' ]
 		},
 		title: {
 			type: String,
@@ -77,6 +78,10 @@ export default {
 			} else if ( typeof entry === 'object' && entry.decl ) {
 
 				retval += `<strong>${entry.decl.name}</strong><br /><em>${entry.decl.type}</em> vs. <em>${entry.docs.type}</em>`;
+
+			} else if ( typeof entry === 'object' && entry.name ) {
+
+				retval += entry.name;
 
 			} else {
 
