@@ -378,35 +378,6 @@ export default {
 
 		},
 
-		counts: function () {
-
-			this.files1;
-			this.content1;
-
-			if ( this.files1.length > 0 ) {
-
-				return this.files1.reduce( ( all, cur ) => {
-
-					const differentName =
-						this.content1[ cur ].onlySource.methods.length +
-						this.content1[ cur ].onlySource.properties.length +
-						this.content1[ cur ].onlyDecl.methods.length +
-						this.content1[ cur ].onlyDecl.properties.length;
-
-					const differentType = this.content1[ cur ].diff.methods.length + this.content1[ cur ].diff.properties.length;
-
-					all[ cur ] = differentName + differentType;
-
-					return all;
-
-				}, {} );
-
-			}
-
-			return {};
-
-		},
-
 		diff: function () {
 
 			if ( this.revision1 &&
