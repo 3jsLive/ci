@@ -25,7 +25,12 @@ const routes = [
 		name: 'docsdecl',
 		props: ( route ) => ( { filename: route.query.filename, revision1: route.params.firstRev, revision2: route.params.secondRev } )
 	},
-	{ path: '/srcdecl/:firstRev?/:secondRev?', component: srcdecl, name: 'srcdecl' },
+	{
+		path: '/srcdecl/:firstRev?/:secondRev?',
+		component: srcdecl,
+		name: 'srcdecl',
+		props: ( route ) => ( { filename: route.query.filename, revision1: route.params.firstRev, revision2: route.params.secondRev } )
+	},
 	{ path: '/objdecl/:firstRev?/:secondRev?', component: objdecl }
 ];
 
