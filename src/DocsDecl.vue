@@ -130,7 +130,7 @@
         </div>
         <div
           id="files-container"
-          class="row overflow-auto vh-100 border"
+          class="row overflow-auto border h-100"
         >
           <ul
             class="list-group list-group-flush h-100"
@@ -160,7 +160,7 @@
       <div
         v-if="content1[ filename ]"
         class="flex-fill h-100 ml-4 pl-0"
-        style="width: 500px;max-width: 100%"
+        style="width: 500px;overflow: scroll;max-width: 100%"
       >
         <WarningErrorMembers
           v-if="showDiffResults"
