@@ -47,6 +47,13 @@
             aria-labelledby="navbarDropdownChecks"
           >
             <router-link
+              to="/checksSummary"
+              class="dropdown-item disabled"
+            >
+              Summary
+            </router-link>
+            <div class="dropdown-divider" />
+            <router-link
               to="/docsdecl"
               class="dropdown-item"
             >
@@ -67,36 +74,41 @@
               Source vs. Declaration<br>
               <em class="small">Scan certain source files for differences with the declaration files</em>
             </router-link>
-            <a
-              class="dropdown-item disabled"
-              href="#"
-            >Test with TypeScript compiler<br>
+            <router-link
+              to="/checkWithTS"
+              class="dropdown-item"
+            >
+              Test with TypeScript compiler<br>
               <em class="small">Let the TypeScript compiler check all JavaScript files for type- and other errors</em>
-            </a>
-            <a
-              class="dropdown-item disabled"
-              href="#"
-            >Scan Docs for broken example Links<br>
+            </router-link>
+            <router-link
+              to="/checkDocsExamples"
+              class="dropdown-item"
+            >
+              Scan Docs for broken example links<br>
               <em class="small">Search for broken <code>[example: ...]</code> links in the documentation</em>
-            </a>
-            <a
-              class="dropdown-item disabled"
-              href="#"
-            >Scan Docs for broken external Links<br>
+            </router-link>
+            <router-link
+              to="/checkDocsExternals"
+              class="dropdown-item"
+            >
+              Scan Docs for broken external links<br>
               <em class="small">Search for <code>[link: ...]</code> tags with outdated target URLs</em>
-            </a>
-            <a
-              class="dropdown-item disabled"
-              href="#"
-            >Scan Non-Docs for broken external Links<br>
+            </router-link>
+            <router-link
+              to="/checkNonDocsExternals"
+              class="dropdown-item"
+            >
+              Scan Non-Docs for broken external links<br>
               <em class="small">Search other HTML and JavaScript files for references of broken URLs</em>
-            </a>
-            <a
-              class="dropdown-item disabled"
-              href="#"
-            >Check NPM for outdated dependencies<br>
+            </router-link>
+            <router-link
+              to="/checkNpm"
+              class="dropdown-item"
+            >
+              Check NPM for outdated dependencies<br>
               <em class="small">Query the NPM registry for available updates to the dependencies</em>
-            </a>
+            </router-link>
           </div>
         </li>
         <li class="nav-item dropdown">
@@ -115,6 +127,13 @@
             class="dropdown-menu"
             aria-labelledby="navbarDropdownLinters"
           >
+            <router-link
+              to="/lintersSummary"
+              class="dropdown-item disabled"
+            >
+              Summary
+            </router-link>
+            <div class="dropdown-divider" />
             <a
               class="dropdown-item disabled"
               href="#"
