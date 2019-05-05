@@ -19,6 +19,7 @@
           size="sm"
           placeholder="works: SHA, TODO: HEAD, <branch>, <PR id>"
           prepend="Revision 1"
+          @hit="updateRev1()"
         />
         <vue-bootstrap-typeahead
           ref="search2"
@@ -30,6 +31,7 @@
           :disabled="secondRevDisabled"
           :placeholder="secondRevPlaceholder"
           prepend="Revision 2"
+          @hit="updateRev2()"
         />
       </div>
       <div class="col">
@@ -537,7 +539,8 @@ export default {
 		// selected first revision changed, update nagivation
 		selectedRev1: function ( /* rev */ ) {
 
-			if ( this.revision1 !== this.selectedRev1 ) {
+			// TODO: simplify because of === ''
+			if ( this.selectedRev1 === '' && this.revision1 !== this.selectedRev1 ) {
 
 				let params;
 				if ( this.revision2 && this.selectedRev1 ) params = { firstRev: this.selectedRev1, secondRev: this.revision2 };
@@ -558,7 +561,8 @@ export default {
 		// selected second revision changed, update nagivation
 		selectedRev2: function ( /* rev */ ) {
 
-			if ( this.revision2 !== this.selectedRev2 ) {
+			// TODO: simplify because of === ''
+			if ( this.selectedRev2 === '' && this.revision2 !== this.selectedRev2 ) {
 
 				const params = ( this.selectedRev2 && this.revision1 ) ? { firstRev: this.revision1, secondRev: this.selectedRev2 } : { firstRev: this.revision1 };
 				const query = ( this.filename && this.revision1 ) ? { filename: this.filename } : {};
@@ -653,6 +657,42 @@ export default {
 	},
 
 	methods: {
+
+		updateRev1: function () {
+
+			if ( this.revision1 !== this.selectedRev1 ) {
+
+				let params;
+				if ( this.revision2 && this.selectedRev1 ) params = { firstRev: this.selectedRev1, secondRev: this.revision2 };
+				else if ( this.selectedRev1 ) params = { firstRev: this.selectedRev1 };
+				else params = {};
+
+				const query = ( this.filename && this.selectedRev1 ) ? { filename: this.filename } : {};
+
+				this.$router.push( {
+					name: 'linterDoobsDoc',
+					params, query
+				} );
+
+			}
+
+		},
+
+		updateRev2: function () {
+
+			if ( this.revision2 !== this.selectedRev2 ) {
+
+				const params = ( this.selectedRev2 && this.revision1 ) ? { firstRev: this.revision1, secondRev: this.selectedRev2 } : { firstRev: this.revision1 };
+				const query = ( this.filename && this.revision1 ) ? { filename: this.filename } : {};
+
+				this.$router.push( {
+					name: 'linterDoobsDoc',
+					params, query
+				} );
+
+			}
+
+		},
 
 		// TODO: refactor into one
 		dtUpdateSort1: function ( { sortField, sort } ) {
