@@ -21,6 +21,7 @@
           size="sm"
           placeholder="works: SHA, TODO: HEAD, <branch>, <PR id>"
           prepend="Revision 1"
+          @hit="updateRev1()"
         />
         <vue-bootstrap-typeahead
           ref="search2"
@@ -32,6 +33,7 @@
           :disabled="secondRevDisabled"
           :placeholder="secondRevPlaceholder"
           prepend="Revision 2"
+          @hit="updateRev2()"
         />
       </div>
       <div class="col">
@@ -244,13 +246,26 @@ export default {
 
 		files1: function () {
 
-			return Object.keys( this.content1 ) || [];
+			return ( this.content1 ) ? Object.keys( this.content1 ).sort() : [];
 
 		},
 
 		files2: function () {
 
-			return Object.keys( this.content2 ) || [];
+			return ( this.content2 ) ? Object.keys( this.content2 ).sort() : [];
+
+		},
+
+		filesAll: function () {
+
+			if ( this.files1 && this.files2 )
+				return this.files1.concat( this.files2 ).filter( ( el, i, arr ) => arr.indexOf( el ) === i ).sort();
+			else if ( this.files1 )
+				return this.files1;
+			else if ( this.files2 )
+				return this.files2;
+			else
+				return [];
 
 		},
 
@@ -327,7 +342,7 @@ export default {
 			let matches;
 			if ( this.query.length > 0 ) {
 
-				matches = this.files1
+				matches = this.filesAll
 
 					// filter by actual matches (case insensitive)
 					.filter( name => name.toLowerCase().includes( this.query.toLowerCase() ) )
@@ -338,7 +353,7 @@ export default {
 			} else {
 
 				// or don't, just adapt to expected format
-				matches = this.files1.map( name => ( { raw: name, markup: name } ) );
+				matches = this.filesAll.map( name => ( { raw: name, markup: name } ) );
 
 			}
 
@@ -499,7 +514,8 @@ export default {
 		// selected first revision changed, update nagivation
 		selectedRev1: function ( /* rev */ ) {
 
-			if ( this.revision1 !== this.selectedRev1 ) {
+			// TODO: simplify because of === ''
+			if ( this.selectedRev1 === '' && this.revision1 !== this.selectedRev1 ) {
 
 				console.log( 'push to selected', this.selectedRev1, 'selected2/second', this.selectedRev2 || this.revision2, 'file', this.filename );
 
@@ -522,7 +538,8 @@ export default {
 		// selected second revision changed, update nagivation
 		selectedRev2: function ( /* rev */ ) {
 
-			if ( this.revision2 !== this.selectedRev2 ) {
+			// TODO: simplify because of === ''
+			if ( this.selectedRev2 === '' && this.revision2 !== this.selectedRev2 ) {
 
 				console.log( 'push to first', this.revision1, 'selected2', this.selectedRev2, 'file', this.filename );
 
@@ -621,6 +638,42 @@ export default {
 	},
 
 	methods: {
+
+		updateRev1: function () {
+
+			if ( this.revision1 !== this.selectedRev1 ) {
+
+				let params;
+				if ( this.revision2 && this.selectedRev1 ) params = { firstRev: this.selectedRev1, secondRev: this.revision2 };
+				else if ( this.selectedRev1 ) params = { firstRev: this.selectedRev1 };
+				else params = {};
+
+				const query = ( this.filename && this.selectedRev1 ) ? { filename: this.filename } : {};
+
+				this.$router.push( {
+					name: 'docsdecl',
+					params, query
+				} );
+
+			}
+
+		},
+
+		updateRev2: function () {
+
+			if ( this.revision2 !== this.selectedRev2 ) {
+
+				const params = ( this.selectedRev2 && this.revision1 ) ? { firstRev: this.revision1, secondRev: this.selectedRev2 } : { firstRev: this.revision1 };
+				const query = ( this.filename && this.revision1 ) ? { filename: this.filename } : {};
+
+				this.$router.push( {
+					name: 'docsdecl',
+					params, query
+				} );
+
+			}
+
+		},
 
 		fileHasErrorOrWarning( name ) {
 
