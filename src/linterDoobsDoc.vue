@@ -176,7 +176,6 @@
 
 import { DataTable } from 'v-datatable-light';
 import VueBootstrapTypeahead from './components/VueBootstrapTypeahead.vue';
-import * as justDiff from 'just-diff';
 
 const API_URL = 'http://localhost:8855';
 

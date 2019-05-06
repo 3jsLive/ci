@@ -21,6 +21,7 @@ const checkDocsExamples = resolve => require( [ './checkDocsExamples.vue' ], res
 const checkDocsExternals = resolve => require( [ './checkDocsExternals.vue' ], resolve );
 const checkNonDocsExternals = resolve => require( [ './checkNonDocsExternals.vue' ], resolve );
 const checkNpm = resolve => require( [ './checkNpm.vue' ], resolve );
+const linterDoobsDoc = resolve => require( [ './linterDoobsDoc.vue' ], resolve );
 
 const routes = [
 	{
@@ -70,6 +71,12 @@ const routes = [
 		component: checkNpm,
 		name: 'checkNpm',
 		props: ( route ) => ( { revision1: route.params.firstRev, revision2: route.params.secondRev } )
+	},
+	{
+		path: '/linterDoobsDoc/:firstRev?/:secondRev?',
+		component: linterDoobsDoc,
+		name: 'linterDoobsDoc',
+		props: ( route ) => ( { filename: route.query.filename, revision1: route.params.firstRev, revision2: route.params.secondRev } )
 	}
 ];
 
