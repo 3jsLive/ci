@@ -87,84 +87,126 @@ const routes = [
 		path: '/runs/:run([0-9]+)/linters/DoobsDoc',
 		components: { navbar: NavBar, default: linterDoobsDoc },
 		name: 'linterDoobsDoc',
-		props: propsRunFilename
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
 	},
 	{
 		path: '/runs/:run([0-9]+)/linters/HTMLLint',
 		components: { navbar: NavBar, default: linterHtml },
 		name: 'linterHtml',
-		props: propsRunFilename
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
 	},
 	{
 		path: '/runs/:run([0-9]+)/linters/StyleLint',
 		components: { navbar: NavBar, default: linterCss },
 		name: 'linterCss',
-		props: propsRunFilename
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
 	},
 	{
 		path: '/runs/:run([0-9]+)/linters/ESLintCodeTags',
 		components: { navbar: NavBar, default: linterEslintCodeTags },
 		name: 'linterEslintCodeTags',
-		props: propsRunFilename
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
 	},
 	{
 		path: '/runs/:run([0-9]+)/linters/ESLintJsFiles',
 		components: { navbar: NavBar, default: linterEslintJsFiles },
 		name: 'linterEslintJsFiles',
-		props: propsRunFilename
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
 	},
 	{
 		path: '/runs/:run([0-9]+)/linters/ESLintTsFiles',
 		components: { navbar: NavBar, default: linterEslintTsFiles },
 		name: 'linterEslintTsFiles',
-		props: propsRunFilename
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
 	},
 	{
 		path: '/runs/:run([0-9]+)/linters/ESLintScriptTags',
 		components: { navbar: NavBar, default: linterEslintScriptTags },
 		name: 'linterEslintScriptTags',
-		props: propsRunFilename
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
 	}, {
 		path: '/runs/:run([0-9]+)/checks/DocsExamples',
 		components: { navbar: NavBar, default: checkDocsExamples },
 		name: 'checkDocsExamples',
-		props: propsRun
+		props: {
+			navbar: propsRun,
+			default: propsRun
+		}
 	},
 	{
 		path: '/runs/:run([0-9]+)/checks/DocsExternals',
 		components: { navbar: NavBar, default: checkDocsExternals },
 		name: 'checkDocsExternals',
-		props: propsRun
+		props: {
+			navbar: propsRun,
+			default: propsRun
+		}
 	},
 	{
 		path: '/runs/:run([0-9]+)/checks/NonDocsExternals',
 		components: { navbar: NavBar, default: checkNonDocsExternals },
 		name: 'checkNonDocsExternals',
-		props: propsRun
+		props: {
+			navbar: propsRun,
+			default: propsRun
+		}
 	},
 	{
 		path: '/runs/:run([0-9]+)/checks/TSCompiler',
 		components: { navbar: NavBar, default: checkWithTS },
 		name: 'checkWithTS',
-		props: propsRunFilename
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
 	},
 	{
 		path: '/runs/:run([0-9]+)/checks/DocsDecl',
 		components: { navbar: NavBar, default: docsdecl },
 		name: 'docsdecl',
-		props: propsRunFilename
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
 	},
 	{
 		path: '/runs/:run([0-9]+)/checks/ObjDecl',
 		components: { navbar: NavBar, default: objdecl },
 		name: 'objdecl',
-		props: propsRunFilename
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
 	},
 	{
 		path: '/runs/:run([0-9]+)/checks/SrcDecl',
 		components: { navbar: NavBar, default: srcdecl },
 		name: 'srcdecl',
-		props: propsRunFilename
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
 	},
 	{
 		path: '/runs/:run([0-9]+)/checks/UnitTests',
