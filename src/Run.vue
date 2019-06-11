@@ -1,19 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="container-fluid d-flex flex-column">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-          <a href="/">Home</a>
-        </li>
-        <li
-          class="breadcrumb-item active"
-          aria-current="page"
-        >
-          Run: {{ run }}, Rev: {{ runInfo.sha }}
-        </li>
-      </ol>
-    </nav>
     <div class="row flex-fill">
       <div class="col-12">
         <h2>

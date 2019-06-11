@@ -1,16 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="container-fluid d-flex flex-column">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li
-          class="breadcrumb-item active"
-          aria-current="page"
-        >
-          Home
-        </li>
-      </ol>
-    </nav>
     <div
       id="content"
     >
