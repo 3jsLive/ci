@@ -1,0 +1,270 @@
+<template>
+  <div class="container-fluid d-flex flex-column h-100">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="/">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+          <router-link :to="`/${run}`">
+            Run: {{ run }}, Rev: {{ runInfo.sha }}
+          </router-link>
+        </li>
+        <li class="breadcrumb-item">
+          <router-link :to="`/${run}/checks`">
+            Checks
+          </router-link>
+        </li>
+        <li
+          class="breadcrumb-item active"
+          aria-current="page"
+        >
+          Scan Docs for broken external links
+        </li>
+      </ol>
+    </nav>
+    <div
+      id="content"
+      class="row d-flex align-items-stretch"
+    >
+      <div
+        class="flex-fill h-100 ml-4 pl-0"
+        style="width: 500px;overflow: scroll;max-width: 100%"
+      >
+        <h4 class="text-center">
+          Results
+        </h4>
+        <DataTable
+          :header-fields="tableHeaders"
+          :data="tableData"
+          :css="tableCss"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+
+import { DataTable } from 'v-datatable-light';
+
+// const API_URL = 'http://localhost:8855';
+const API_URL = '/api';
+
+
+export default {
+
+	name: 'CheckDocsExternals',
+
+	components: {
+		DataTable
+	},
+
+	props: {
+		'run': {
+			type: Number,
+			default: 1,
+			required: true
+		}
+	},
+
+	data: function () {
+
+		return {
+			runInfo: {},
+
+			content: '',
+
+			tableCss: {
+				table: 'table table-bordered table-hover table-striped table-center',
+				th: 'header-item',
+				thWrapper: 'th-wrapper',
+				thWrapperCheckboxes: 'th-wrapper checkboxes',
+				arrowsWrapper: 'arrows-wrapper',
+				arrowUp: 'arrow up',
+				arrowDown: 'arrow down',
+				footer: 'footer'
+			},
+
+			tableHeaders: [ {
+				name: 'page', label: 'Doc page'
+			}, {
+				name: 'target', label: 'Link target'
+			} ]
+
+		};
+
+	},
+
+	computed: {
+
+		revision: function () {
+
+			return this.runInfo.sha;
+
+		},
+
+		tableData: function () {
+
+			if ( this.content ) {
+
+				// HACK this hasn't been init'ed fully yet
+				if ( Object.keys( this.content ).includes( 'Loading...' ) )
+					return [];
+
+				const data = Object.keys( this.content ).reduce( ( all, file ) => {
+
+					this.content[ file ].forEach( link => all.push( { page: file, target: link } ) );
+
+					return all;
+
+				}, [] );
+
+				return data.sort( ( a, b ) => a.page.localeCompare( b.page ) );
+
+			} else {
+
+				return [];
+
+			}
+
+		}
+
+	},
+
+	watch: {
+
+		revision: async function ( rev ) {
+
+			if ( rev && rev.length > 0 ) {
+
+				if ( ! this.content || Object.keys( this.content ).length === 0 ) {
+
+					this.content = { "Loading...": true };
+					this.content = await this._fetchFilesOfRevision( this.revision );
+
+				} else
+					console.log( 'content already loaded' );
+
+			} else {
+
+				this.content = '';
+
+			}
+
+		}
+
+	},
+
+	created() {
+
+		this.pullRunInfo();
+
+	},
+
+	methods: {
+
+		// TODO: replace with vuex (store)
+		pullRunInfo() {
+
+			return fetch( `${API_URL}/runInfo/${this.run}` )
+				.then( res => res.json() )
+				.then( runInfo => {
+
+					this.runInfo = runInfo;
+
+					console.log( { runInfo } );
+
+					return true;
+
+				} )
+				.catch( err => console.error( 'runInfo request:', err ) );
+
+		},
+
+		_fetchFilesOfRevision( rev ) {
+
+			return fetch( `${API_URL}/checkDocsExternals/showFile/${rev}` )
+				.then( res => res.json() )
+				.catch( err => console.error( '_fetchFilesOfRevision: %o', err ) );
+
+		}
+
+	}
+
+};
+</script>
+
+<style>
+#content { height: 100%; overflow: hidden }
+#content.row {
+    height: 100%;
+	overflow: auto;
+}
+
+/* Datatable CSS */
+.v-datatable-light {
+  width: 1167px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.v-datatable-light .header-item {
+  cursor: pointer;
+  color: #337ab7;
+  transition: color 0.15s ease-in-out;
+}
+.v-datatable-light .header-item:hover {
+  color: #ed9b19;
+}
+.v-datatable-light .header-item.no-sortable{
+  cursor: default;
+}
+.v-datatable-light .header-item.no-sortable:hover {
+  color: #337ab7;
+}
+.v-datatable-light .header-item .th-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  font-weight: bold;
+}
+.v-datatable-light .header-item .th-wrapper.checkboxes {
+  justify-content: center;
+}
+.v-datatable-light .header-item .th-wrapper .arrows-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  justify-content: space-between;
+}
+.v-datatable-light .header-item .th-wrapper .arrows-wrapper.centralized {
+  justify-content: center;
+}
+.v-datatable-light .arrow {
+  transition: color 0.15s ease-in-out;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+.v-datatable-light .arrow.up {
+  border-bottom: 8px solid #337ab7;
+}
+.v-datatable-light .arrow.up:hover {
+  border-bottom: 8px solid #ed9b19;
+}
+.v-datatable-light .arrow.down {
+  border-top: 8px solid #337ab7;
+}
+.v-datatable-light .arrow.down:hover {
+  border-top: 8px solid #ed9b19;
+}
+.v-datatable-light .footer {
+  display: flex;
+  justify-content: space-between;
+  width: 500px;
+}
+
+/* End Datatable CSS */
+
+</style>
