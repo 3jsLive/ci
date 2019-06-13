@@ -39,8 +39,15 @@ data.test	current test
           data-toggle="collapse"
           :href="`#files-${data.test}`"
           role="button"
-          @click="$eventBus.$emit( 'detail', data.test )"
-        >▼</a>
+          @click="detailRequest( data.test, 'all' )"
+        ><small>[hits]</small></a>
+        <a
+          v-if="showExpander && somethingChanged"
+          data-toggle="collapse"
+          :href="`#files-${data.test}`"
+          role="button"
+          @click="detailRequest( data.test, 'diff' )"
+        ><small class="pl-2">[diff]</small></a>
         <!-- <div>foo▲▼</div> -->
       </template>
       <span v-else>{{ data.name }}</span>
@@ -74,14 +81,14 @@ data.test	current test
         class="offline"
         :class="{ 'text-muted': data.result === '-' }"
         :to="
-          `/${data.run}/matrix/${data.test}`"
+          `/runs/${data.run}/matrix/${data.test}`"
       >
         Matrix
       </router-link>
       <router-link
         class="offline"
         :class="{ 'text-muted': data.result === '-' }"
-        :to="`/${data.run}/plot/${data.test}`"
+        :to="`/runs/${data.run}/plot/${data.test}`"
       >
         Plot
       </router-link>
@@ -281,13 +288,9 @@ export default {
 
 		data( newValue ) {
 
-			if ( newValue && typeof newValue[ 'history' ] !== 'undefined' && newValue.history.length > 0 ) {
+			if ( newValue && typeof newValue[ 'history' ] !== 'undefined' && newValue.history && newValue.history.length > 0 ) {
 
 				this.chartOptions.series[ 0 ].data = this.data.history;
-
-			} else {
-
-				console.log( 'nope', { newValue } );
 
 			}
 
@@ -296,6 +299,18 @@ export default {
 	},
 
 	methods: {
+
+		detailRequest( test, amount ) {
+
+			this.$eventBus.$once( 'detailRepl', ( rows ) => {
+
+				console.log( rows, 'received' );
+
+			} );
+
+			this.$eventBus.$emit( 'detailReq', { test, amount } );
+
+		},
 
 		percentageColors( value, higherIsWorse = true ) {
 

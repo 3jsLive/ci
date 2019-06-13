@@ -4,8 +4,16 @@
       class="navbar-brand"
       href="#"
     >3ci</a> -->
-    <ul class="navbar-nav ml-3">
-      <li class="nav-item dropdown">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <router-link
+          to="/runs"
+          class="nav-link"
+        >
+          Home
+        </router-link>
+      </li>
+      <li class="nav-item dropdown ml-3 border-1 border-left pl-3">
         <a
           id="navbarDropdownChecks"
           class="nav-link dropdown-toggle navbar-text text-warning"
@@ -33,14 +41,12 @@
           </div>
         </div> -->
       </li>
-    </ul>
-    <ul class="navbar-nav ml-3">
       <li class="nav-item">
         <router-link
-          to="/"
+          :to="`/runs/${run}`"
           class="nav-link"
         >
-          Home
+          Overview
         </router-link>
       </li>
       <li class="nav-item dropdown">
@@ -199,7 +205,7 @@
           aria-disabled="true"
         >Dependencies</a>
       </li>
-      <li class="nav-item">
+      <li class="border-1 border-left ml-3 pl-3 nav-item">
         <a
           class="nav-link disabled"
           href="#"

@@ -12,9 +12,9 @@
       >
         <ul>
           <li>
-            <router-link :to="'/' + history[ 0 ].runId">
+            <router-link :to="'/runs/' + history[ 0 ].runId">
               {{ `#${history[ 0 ].runId}` }}
-            </router-link>: {{ history[ 0 ].sha }} <span class="bg-primary text-white">(Base)</span>
+            </router-link>: {{ history[ 0 ].sha }} <span class="badge badge-pill badge-primary">Base</span>
           </li>
           <li
             v-for="row in history.slice(1)"
@@ -22,7 +22,7 @@
           >
             <router-link
               v-if="row.runId !== - 1"
-              :to="'/' + row.runId"
+              :to="'/runs/' + row.runId"
             >
               {{ `#${row.runId}` }}
             </router-link>
@@ -52,7 +52,7 @@ export default {
 
 	props: {
 		'history': {
-			type: Array,
+			type: [ Array, Boolean ],
 			default: () => ( [] )
 		}
 	},

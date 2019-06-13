@@ -22,14 +22,14 @@
             <tr><td>Trigger</td><td>{{ runInfo.reason }}</td></tr>
             <tr>
               <td>Baseline run</td><td>
-                <router-link :to="`/${runInfo.baselineRunId}`">
+                <router-link :to="`/runs/${runInfo.baselineRunId}`">
                   #{{ runInfo.baselineRunId }}
                 </router-link>
               </td>
             </tr>
             <tr>
               <td>Parent run</td><td>
-                <router-link :to="`/${runInfo.parentRunId}`">
+                <router-link :to="`/runs/${runInfo.parentRunId}`">
                   #{{ runInfo.parentRunId }}
                 </router-link>
               </td>
@@ -88,7 +88,7 @@ export default {
 
 	props: {
 		'runInfo': {
-			type: Object,
+			type: [ Object, Boolean ],
 			default: () => ( { } )
 		}
 	},

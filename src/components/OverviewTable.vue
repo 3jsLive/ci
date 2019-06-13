@@ -17,9 +17,9 @@
             :show-expander="true"
             :data="prepResultsTableRowData( 'checks', test, name )"
           />
-          <template v-if="details[ test ]">
+          <template v-if="showDetails( test )">
             <results-table-row
-              v-for="file in Object.keys( details[ test ] )"
+              v-for="file in Object.keys( detailsPrepped[ test ] )"
               :key="`${test}-${file}-details`"
               :show-parent="true"
               :show-history="false"
@@ -45,8 +45,20 @@
             :show-history="true"
             :show-baseline="true"
             :show-links="true"
+            :show-expander="true"
             :data="prepResultsTableRowData( 'linters', test, name )"
           />
+          <template v-if="showDetails( test )">
+            <results-table-row
+              v-for="file in Object.keys( detailsPrepped[ test ] )"
+              :key="`${test}-${file}-details`"
+              :show-parent="true"
+              :show-history="false"
+              :show-baseline="true"
+              :show-links="true"
+              :data="prepResultsTableRowDataDetails( 'checks', test, name, file )"
+            />
+          </template>
         </template>
       </tbody>
     </table>
@@ -145,8 +157,9 @@ export default {
 
 		return {
 
-			currentlyOpen: {},
-			details: {}
+			details: {},
+			detailsPrepped: {},
+			detailsStatus: {}
 
 		};
 
@@ -154,19 +167,63 @@ export default {
 
 	mounted() {
 
-		this.$eventBus.$on( 'detail', test => {
+		this.$eventBus.$on( 'detailReq', payload => {
 
-			console.log( `${test} needs more details` );
+			const test = payload.test;
+			const amount = payload.amount;
 
-			this.pullDetailedOverview( test );
+			// not open -> open
+			if ( ! this.detailsStatus[ test ] ) {
 
-			this.currentlyOpen[ test ] = true;
+				console.log( `${test} needs more details` );
+
+				this.pullAndSetDetailedOverview( test, amount );
+
+			} else if ( this.detailsStatus[ test ] === amount ) {		// open and same amount -> close
+
+				this.$set( this.detailsPrepped, test, {} );
+
+				this.$set( this.detailsStatus, test, false );
+
+			} else { // open and different amount -> switch
+
+				if ( amount === 'all' ) {
+
+					this.$set( this.detailsPrepped, test, this.details[ test ] );
+
+				} else {
+
+					const reduced = Object.entries( this.details[ test ] ).reduce( ( all, [ file, result ] ) => {
+
+						if ( result.result !== result.parent || result.result !== result.baseline )
+							all[ file ] = result;
+
+						return all;
+
+					}, {} );
+
+					this.$set( this.detailsPrepped, test, reduced );
+
+				}
+
+				this.$set( this.detailsStatus, test, amount );
+
+			}
 
 		} );
 
 	},
 
 	methods: {
+
+		showDetails( test ) {
+
+			if ( test in this.detailsStatus && this.detailsStatus[ test ] !== false )
+				return true;
+			else
+				return false;
+
+		},
 
 		prepResultsTableRowData( testGroup, testName, name ) {
 
@@ -212,7 +269,7 @@ export default {
 
 		},
 
-		pullDetailedOverview( test ) {
+		pullAndSetDetailedOverview( test, amount ) {
 
 			return fetch( `${API_URL}/detailedOverview/${this.run}/${test}` )
 				.then( res => res.json() )
@@ -293,7 +350,33 @@ export default {
 
 					console.log( { details: this.details } );
 
-					return true;
+					return prepared;
+
+				} )
+				.then( prepared => {
+
+					if ( amount === 'all' ) {
+
+						this.$set( this.detailsPrepped, test, prepared );
+
+					} else {
+
+						const reduced = Object.entries( this.details[ test ] ).reduce( ( all, [ file, result ] ) => {
+
+							if ( result.result !== result.parent || result.result !== result.baseline )
+								all[ file ] = result;
+
+							return all;
+
+						}, {} );
+
+						this.$set( this.detailsPrepped, test, reduced );
+
+					}
+
+					this.$set( this.detailsStatus, test, amount );
+
+					return prepared;
 
 				} )
 				.catch( err => console.error( 'detailedOverview request:', err ) );
