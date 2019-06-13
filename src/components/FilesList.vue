@@ -19,6 +19,7 @@
     </div>
     <div
       id="files-container"
+      :ref="'filesContainer'"
       class="overflow-auto h-100 ml-3"
     >
       <ul
@@ -27,6 +28,7 @@
         <button
           v-for="( f, index ) in queryMatches()"
           :key="`${f.raw}-${index}`"
+          :ref="(selectedFilename === f.raw) ? 'activeFile' : 'notActive'"
           type="button"
           class="list-group-item-action list-group-item d-flex justify-content-between align-items-center py-1"
           :class="{ active: selectedFilename === f.raw, 'bg-warning text-dark': f.warning || false, 'bg-danger text-white': f.error || false }"
@@ -45,6 +47,9 @@
 </template>
 
 <script>
+
+import Vue from 'vue';
+import { setTimeout } from 'timers';
 
 export default {
 
@@ -92,6 +97,14 @@ export default {
 	mounted() {
 
 		this.selectedFilename = this.selected;
+
+		Vue.nextTick()
+			.then( () => {
+
+				// oh god
+				return setTimeout( () => this.$refs[ 'activeFile' ][ 0 ].scrollIntoView(), 500 );
+
+			} );
 
 	},
 
