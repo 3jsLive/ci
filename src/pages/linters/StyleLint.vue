@@ -118,7 +118,7 @@ export default {
 
 			if ( this.content && this.content[ 'Loading...' ] !== true && this.filename ) {
 
-				const data = this.content[ this.filename ].results || [];
+				const data = this.content.results[ this.filename ].results || [];
 
 				if ( this.sortField === 'message' || this.sortField === 'level' ) {
 
@@ -146,7 +146,7 @@ export default {
 
 		filesAll: function () {
 
-			return ( this.content ) ? Object.keys( this.content ).sort() : [];
+			return ( this.content && this.content.results ) ? Object.keys( this.content.results ).sort() : [];
 
 		},
 
@@ -158,7 +158,7 @@ export default {
 
 			return this.filesAll.reduce( ( all, file ) => {
 
-				const counter = this.content[ file ].results.length;
+				const counter = this.content.results[ file ].results.length;
 
 				all[ file ] = { hide: false, name: file, decoration: { text: counter, class: 'bg-warning' } };
 
