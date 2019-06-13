@@ -18,8 +18,15 @@
           class="flex-fill d-flex flex-column align-items-center h-100 ml-1 mr-3"
           style="height: 95%!important; overflow: auto"
         >
+          <div
+            v-if="showError !== false"
+            class="alert alert-danger text-center"
+            role="alert"
+          >
+            <strong>Error</strong><br>{{ showError }}
+          </div>
           <template
-            v-if="tableData"
+            v-if="tableData && showError === false"
           >
             <h4 class="text-center">
               Results
@@ -117,7 +124,7 @@ export default {
 
 		tableData: function () {
 
-			if ( this.content && this.content[ 'Loading...' ] !== true && this.filename ) {
+			if ( this.content && this.content[ 'Loading...' ] !== true && this.filename && this.content.results ) {
 
 				const data = this.content.results[ this.filename ].results || [];
 
@@ -145,6 +152,34 @@ export default {
 
 		},
 
+		showError: function ( ) {
+
+			if ( this.content && this.filename &&
+				this.content.results &&
+				this.content.results[ this.filename ] &&
+				this.content.results[ this.filename ].errors.length > 0
+			) {
+
+				const errors = this.content.results[ this.filename ].errors;
+
+				const errorsText = errors.map( err => {
+
+					if ( err.message )
+						return err.message;
+					else
+						return err;
+
+				} ).join( '<br />' );
+
+				return errorsText;
+
+			}
+
+			return false;
+
+		},
+
+
 		filesAll: function () {
 
 			return ( this.content && this.content.results ) ? Object.keys( this.content.results ).sort() : [];
@@ -159,9 +194,20 @@ export default {
 
 			return this.filesAll.reduce( ( all, file ) => {
 
-				const counter = this.content.results[ file ].results.length;
+				let counter;
+				if ( this.content.results[ file ].errors.length > 0 ) {
 
-				all[ file ] = { hide: false, name: file, decoration: { text: counter, class: 'bg-warning' } };
+					counter = this.content.results[ file ].errors.length;
+
+					all[ file ] = { hide: false, name: file, decoration: { text: counter, class: 'bg-danger text-white' } };
+
+				} else {
+
+					counter = this.content.results[ file ].results.length;
+
+					all[ file ] = { hide: false, name: file, decoration: { text: counter, class: 'bg-warning' } };
+
+				}
 
 				return all;
 
