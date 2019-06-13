@@ -8,40 +8,34 @@
         </h2>
       </div>
     </div>
-    <div
-      id="content"
-    >
+    <div id="content">
       <div class="row mt-3">
         <div class="col-8">
           <div class="row">
+            <div class="col-5">
+              <run-info
+                :run-info="runInfo"
+              />
+            </div>
             <div class="col-7">
-              <div class="row flex-column">
-                <div
-                  v-if="runInfo !== false && ( reduceToNotable( 'parent' ).improvements.length > 0 || reduceToNotable( 'parent' ).regressions.length > 0 )"
-                  class="col"
-                >
+              <div
+                v-if="runInfo !== false"
+                class="row flex-column"
+              >
+                <div class="col">
                   <notable-changes
                     :same="runInfo.baselineRunId === runInfo.parentRunId"
                     type="parent"
                     :data="reduceToNotable( 'parent' )"
                   />
                 </div>
-
-                <div
-                  v-if="runInfo !== false && ( reduceToNotable( 'baseline' ).improvements.length > 0 || reduceToNotable( 'baseline' ).regressions.length > 0 )"
-                  class="col mt-4"
-                >
+                <div class="col mt-4">
                   <notable-changes
                     type="baseline"
                     :data="reduceToNotable( 'baseline' )"
                   />
                 </div>
               </div>
-            </div>
-            <div class="col-5">
-              <run-info
-                :run-info="runInfo"
-              />
             </div>
           </div>
           <div
