@@ -29,7 +29,10 @@
                     :data="reduceToNotable( 'parent' )"
                   />
                 </div>
-                <div class="col mt-4">
+                <div
+                  class="col"
+                  :class="{ 'mt-4': parentExists === true }"
+                >
                   <notable-changes
                     type="baseline"
                     :data="reduceToNotable( 'baseline' )"
@@ -140,6 +143,13 @@ export default {
 	},
 
 	computed: {
+
+		parentExists: function () {
+
+			const data = this.reduceToNotable( 'parent' );
+			return data.improvements.length > 0 || data.regressions.length > 0;
+
+		}
 
 	},
 
