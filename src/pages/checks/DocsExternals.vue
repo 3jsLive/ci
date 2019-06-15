@@ -15,7 +15,18 @@
           :header-fields="tableHeaders"
           :data="tableData"
           :css="tableCss"
-        />
+        >
+          <div
+            slot="LinkOrError"
+            slot-scope="props"
+          >
+            <span v-if="props.rowData.target">{{ props.rowData.target }}</span>
+            <span
+              v-else
+              class="alert alert-danger"
+            ><strong>Error: </strong>{{ props.rowData.error }}</span>
+          </div>
+        </DataTable>
       </div>
     </div>
   </div>
@@ -66,7 +77,7 @@ export default {
 			tableHeaders: [ {
 				name: 'page', label: 'Doc page'
 			}, {
-				name: 'target', label: 'Link target'
+				name: 'target', label: 'Link target', customElement: "LinkOrError"
 			} ]
 
 		};
@@ -83,15 +94,23 @@ export default {
 
 		tableData: function () {
 
-			if ( this.content ) {
+			if ( this.content && Object.keys( this.content ).includes( 'Loading...' ) === false ) {
 
-				// HACK this hasn't been init'ed fully yet
-				if ( Object.keys( this.content ).includes( 'Loading...' ) )
-					return [];
+				const data = Object.keys( this.content.results ).reduce( ( all, file ) => {
 
-				const data = Object.keys( this.content ).reduce( ( all, file ) => {
+					this.content.results[ file ].errors.forEach( err => {
 
-					this.content[ file ].forEach( link => all.push( { page: file, target: link } ) );
+						const errorText = ( err.location ) ? `${err.message} (line ${err.location.start.line})` : err.message;
+
+						all.push( { page: file, target: false, error: errorText } );
+
+					} );
+
+					this.content.results[ file ].results.forEach( link => {
+
+						all.push( { page: file, target: link, error: false } );
+
+					} );
 
 					return all;
 
@@ -172,7 +191,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #content { height: 100%; overflow: hidden }
 #content.row {
     height: 100%;
