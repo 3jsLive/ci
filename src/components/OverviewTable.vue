@@ -56,7 +56,7 @@
               :show-history="false"
               :show-baseline="true"
               :show-links="true"
-              :data="prepResultsTableRowDataDetails( 'checks', test, name, file )"
+              :data="prepResultsTableRowDataDetails( 'linters', test, name, file )"
             />
           </template>
         </template>
