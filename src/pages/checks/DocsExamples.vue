@@ -15,7 +15,18 @@
           :header-fields="tableHeaders"
           :data="tableData1"
           :css="tableCss"
-        />
+        >
+          <div
+            slot="ExampleOrError"
+            slot-scope="props"
+          >
+            <span v-if="props.rowData.value.example">{{ props.rowData.value.example }}</span>
+            <span
+              v-else
+              class="alert alert-danger"
+            ><strong>Error: </strong>{{ props.rowData.value.error }}</span>
+          </div>
+        </DataTable>
       </div>
     </div>
   </div>
@@ -66,7 +77,8 @@ export default {
 			tableHeaders: [ {
 				name: 'page', label: 'Doc page'
 			}, {
-				name: 'example', label: 'Example name'
+				// name: 'value', label: 'Example name', format: ( field ) => ( field.example ) ? field.example : field.error
+				name: 'value', label: 'Example name', customElement: "ExampleOrError"
 			} ]
 
 		};
@@ -79,10 +91,18 @@ export default {
 
 			if ( this.content1 && Object.keys( this.content1 ).includes( 'Loading...' ) === false ) {
 
-				return Object.keys( this.content1 ).reduce( ( all, file ) => {
+				return Object.keys( this.content1.results ).reduce( ( all, file ) => {
 
 					// this.content1[ file ].forEach( example => all.push( { page: file, example: example } ) );
-					all.push( { page: file, example: this.content1[ file ].join( ', ' ) } );
+					let element = { page: file, value: { example: false, error: false } };
+
+					if ( this.content1.results[ file ].results.length > 0 )
+						element.value.example = this.content1.results[ file ].results.map( r => r.example ).join( ', ' );
+
+					if ( this.content1.results[ file ].errors.length > 0 )
+						element.value.error = this.content1.results[ file ].errors.map( err => ( err.message ) ? `${err.message} (line ${err.location.start.line})` : err ).join( '<br />' );
+
+					all.push( element );
 
 					return all;
 
@@ -98,9 +118,9 @@ export default {
 
 		files1: function () {
 
-			if ( this.content1 ) {
+			if ( this.content1 && this.content1.results ) {
 
-				return Object.keys( this.content1 );
+				return Object.keys( this.content1.results );
 
 			} else {
 
@@ -182,7 +202,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #content { height: 100%; overflow: hidden }
 #content.row {
     height: 100%;
