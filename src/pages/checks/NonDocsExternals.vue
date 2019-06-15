@@ -83,15 +83,11 @@ export default {
 
 		tableData: function () {
 
-			if ( this.content ) {
+			if ( this.content && Object.keys( this.content ).includes( 'Loading...' ) === false ) {
 
-				// HACK this hasn't been init'ed fully yet
-				if ( Object.keys( this.content ).includes( 'Loading...' ) )
-					return [];
+				const data = Object.keys( this.content.results ).reduce( ( all, file ) => {
 
-				const data = Object.keys( this.content ).reduce( ( all, file ) => {
-
-					this.content[ file ].forEach( link => all.push( { page: file, target: link } ) );
+					this.content.results[ file ].results.forEach( link => all.push( { page: file, target: link } ) );
 
 					return all;
 

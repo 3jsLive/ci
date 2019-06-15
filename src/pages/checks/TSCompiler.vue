@@ -114,12 +114,17 @@ export default {
 		tableData: function () {
 
 			console.log( this.content, this.filename );
-			if ( this.content && this.filename ) {
+			if ( this.content && this.filename &&
+				( this.content.js && this.content.dts ) &&
+				( this.content.js.results || this.content.dts.results )
+			) {
 
-				const data = [
-					...Object.values( this.content.js[ this.filename ] || {} ),
-					...Object.values( this.content.dts[ this.filename ] || {} )
-				];
+				let data = [];
+				if ( this.content.js.results[ this.filename ] )
+					data.push( ...this.content.js.results[ this.filename ].results );
+				if ( this.content.dts.results[ this.filename ] )
+					data.push( ...this.content.dts.results[ this.filename ].results );
+
 				console.log( { data } );
 				if ( this.sortField === 'message' ) {
 
@@ -149,7 +154,7 @@ export default {
 
 			if ( this.content && this.content.js && this.content.dts ) {
 
-				const uniques = new Set( [ ...Object.keys( this.content.js ), ...Object.keys( this.content.dts ) ] );
+				const uniques = new Set( [ ...Object.keys( this.content.js.results ), ...Object.keys( this.content.dts.results ) ] );
 
 				return [ ...uniques ];
 
@@ -169,7 +174,7 @@ export default {
 
 			return this.filesAll.reduce( ( all, current ) => {
 
-				const counter = ( this.content.js[ current ] !== undefined ) ? this.content.js[ current ].length : this.content.dts[ current ].length;
+				const counter = ( this.content.js.results[ current ] !== undefined ) ? this.content.js.results[ current ].length : this.content.dts.results[ current ].length;
 
 				all[ current ] = { hide: false, name: current, decoration: { text: counter, class: 'bg-warning' } };
 
