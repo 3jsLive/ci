@@ -2,6 +2,7 @@
 Always:
 data.name
 data.result
+data.errors
 
 Link:
 showLink			flag
@@ -28,6 +29,13 @@ data.test	current test
   <tr :class="{ 'text-muted': data.result === '-' }">
     <td>
       <template v-if="showLinks">
+        <font-awesome-icon
+          v-if="data.errors > 0"
+          icon="exclamation-circle"
+          class="text-danger"
+          fixed-width
+          :title="`${data.errors} errors found`"
+        />
         <router-link
           :class="{ 'offline text-muted': data.result === '-' }"
           :to="data.linkTarget"

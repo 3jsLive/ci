@@ -228,6 +228,7 @@ export default {
 		prepResultsTableRowData( testGroup, testName, name ) {
 
 			const data = ( this.data[ testName ] ) ? this.data[ testName ] : {
+				errors: 0,
 				result: '-',
 				parent: '-',
 				parentDelta: '-',
@@ -249,6 +250,7 @@ export default {
 			return {
 				run: this.run,
 				test: testName,
+				errors: data.errors,
 
 				linkTarget: `${testGroup}/${testName}`,
 				linkText: name,
