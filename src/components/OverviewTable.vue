@@ -391,7 +391,7 @@ export default {
 				run: this.run,
 				test: testName,
 
-				linkTarget: `${testGroup}/${testName}?file=${file}`,
+				linkTarget: `${testGroup}/${testName}?filename=${file}`,
 				linkText: `—— ${file}`,
 
 				history: null,

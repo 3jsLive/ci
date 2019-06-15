@@ -28,7 +28,7 @@
         <button
           v-for="( f, index ) in queryMatches()"
           :key="`${f.raw}-${index}`"
-          :ref="(selectedFilename === f.raw) ? 'activeFile' : 'notActive'"
+          :ref="f.raw"
           type="button"
           class="list-group-item-action list-group-item d-flex justify-content-between align-items-center py-1"
           :class="{ active: selectedFilename === f.raw, 'bg-warning text-dark': f.warning || false, 'bg-danger text-white': f.error || false }"
@@ -94,6 +94,12 @@ export default {
 
 	},
 
+	created() {
+
+		this.selectedFilename = this.selected;
+
+	},
+
 	mounted() {
 
 		this.selectedFilename = this.selected;
@@ -102,7 +108,7 @@ export default {
 			.then( () => {
 
 				// oh god
-				return setTimeout( () => this.$refs[ 'activeFile' ][ 0 ].scrollIntoView(), 500 );
+				return setTimeout( () => this.$refs[ this.selectedFilename ][ 0 ].scrollIntoView(), 500 );
 
 			} );
 
