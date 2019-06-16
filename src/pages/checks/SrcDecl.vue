@@ -28,8 +28,8 @@
 
 <script>
 
-import WarningErrorMembers from '@/src/components/WarningErrorMembers.vue';
-import FilesList from '@/src/components/FilesList.vue';
+const WarningErrorMembers = () => import( /* webpackChunkName: "WarningErrorMembers" */ '@/src/components/WarningErrorMembers.vue' );
+const FilesList = () => import( /* webpackChunkName: "FilesList" */ '@/src/components/FilesList.vue' );
 
 // const API_URL = 'http://localhost:8855';
 const API_URL = '/api';
