@@ -74,7 +74,7 @@
 
 <script>
 
-import ResultsTableRow from './ResultsTableRow.vue';
+const ResultsTableRow = () => import( /* webpackChunkName: "ResultsTableRow" */ '@/src/components/ResultsTableRow.vue' );
 
 export default {
 

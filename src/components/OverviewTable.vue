@@ -124,7 +124,7 @@
 
 <script>
 
-import ResultsTableRow from './ResultsTableRow.vue';
+const ResultsTableRow = () => import( /* webpackChunkName: "ResultsTableRow" */ '@/src/components/ResultsTableRow.vue' );
 
 // const API_URL = 'http://localhost:8855';
 const API_URL = '/api';

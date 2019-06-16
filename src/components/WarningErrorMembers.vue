@@ -40,7 +40,7 @@
 
 <script>
 
-import MemberDiff from './MemberDiff.vue';
+const MemberDiff = () => import( /* webpackChunkName: "MemberDiff" */ './MemberDiff.vue' );
 
 export default {
 
