@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import BaseLinter from './BaseLinter.vue';
+const BaseLinter = () => import( /* webpackChunkName: "BaseLinter" */ './BaseLinter.vue' );
 
 export default {
 
