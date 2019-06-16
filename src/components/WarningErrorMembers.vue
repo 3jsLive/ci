@@ -1,18 +1,9 @@
 <template>
   <div>
-    <div
-      v-if="data.warning !== false"
-      class="alert alert-warning"
-      role="alert"
-    >
-      <strong class="text-uppercase">{{ "WARNING " + title }}</strong>
-      <br>{{ data.warning }}
-    </div>
-
-    <template v-if="data.error === false">
+    <template v-if="data.errors.length === 0">
       <MemberDiff
         v-if="countMemberEntries[ 'properties' ] && countMemberEntries[ 'properties' ] > 0"
-        :content-obj="data"
+        :content-obj="data.results[ 0 ]"
         :translation-table="shortnameToTableCaption"
         :title="'Properties ' + title"
         member-name="properties"
@@ -20,7 +11,7 @@
 
       <MemberDiff
         v-if="countMemberEntries[ 'methods' ] && countMemberEntries[ 'methods' ] > 0"
-        :content-obj="data"
+        :content-obj="data.results[ 0 ]"
         :translation-table="shortnameToTableCaption"
         :title="'Methods ' + title"
         member-name="methods"
@@ -28,12 +19,12 @@
     </template>
 
     <div
-      v-else-if="data.error !== false"
+      v-else-if="data.errors.length !== 0"
       class="alert alert-danger"
       role="alert"
     >
       <strong class="text-uppercase">{{ "WORKER ERROR " + title }}</strong>
-      <br>{{ data.error }}
+      <br>{{ data.errors }}
     </div>
   </div>
 </template>
@@ -54,7 +45,7 @@ export default {
 		data: {
 			type: Object,
 			required: true,
-			validator: obj => typeof obj.warning !== 'undefined' && typeof obj.error !== 'undefined'
+			// validator: obj => typeof obj.warning !== 'undefined' && typeof obj.error !== 'undefined'
 		},
 		title: {
 			type: String,
@@ -85,14 +76,19 @@ export default {
 			let memberEntries = {};
 
 			// e.g. 'onlyDecl' or 'onlySource'
-			const shortnames = Object.keys( this.data ).filter( short => short !== 'error' && short !== 'warning' );
+			const shortnames = Object.keys( this.data.results[ 0 ] );
 
 			shortnames.forEach( short => {
 
-				Object.keys( this.data[ short ] ).forEach( memberName => {
+				if ( typeof this.shortnameToTableCaption[ short ] === 'undefined' )
+					return;
+
+				console.log( { short } );
+
+				Object.keys( this.data.results[ 0 ][ short ] ).forEach( memberName => {
 
 					memberEntries[ memberName ] = memberEntries[ memberName ] || 0;
-					memberEntries[ memberName ] += this.data[ short ][ memberName ].length;
+					memberEntries[ memberName ] += this.data.results[ 0 ][ short ][ memberName ].length;
 
 				} );
 

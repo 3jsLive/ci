@@ -13,12 +13,12 @@
       />
 
       <div
-        v-if="content[ filename ]"
+        v-if="content.results[ filename ]"
         class="flex-fill h-100 ml-4 pl-0"
         style="width: 500px;overflow: scroll;max-width: 100%"
       >
         <WarningErrorMembers
-          :data="content[ filename ]"
+          :data="content.results[ filename ]"
           :shortname-to-table-caption="shortnameToTableCaption"
           title=""
         />
@@ -38,8 +38,8 @@
 
 <script>
 
-const WarningErrorMembers = () => import( /* webpackChunkName: "WarningErrorMembers" */ '@/src/components/WarningErrorMembers.vue' );
-const FilesList = () => import( /* webpackChunkName: "FilesList" */ '@/src/components/FilesList.vue' );
+import WarningErrorMembers from '@/src/components/WarningErrorMembers.vue';
+import FilesList from '@/src/components/FilesList.vue';
 
 // const API_URL = 'http://localhost:8855';
 const API_URL = '/api';
@@ -86,12 +86,6 @@ export default {
 
 	computed: {
 
-		files1: function () {
-
-			return Object.keys( this.content ) || [];
-
-		},
-
 		revision: function () {
 
 			return this.runInfo.sha;
@@ -100,12 +94,12 @@ export default {
 
 		instanceProps: function () {
 
-			if ( ! this.content[ this.filename ] )
+			if ( ! this.content.results[ this.filename ] )
 				return [];
 
-			return this.content[ this.filename ].onlySource.properties.map( prop => {
+			return this.content.results[ this.filename ].results[ 0 ].onlySource.properties.map( prop => {
 
-				return { name: this.content[ this.filename ][ 'class' ] + '.' + prop.name, legacy: prop.legacy };
+				return { name: this.content.results[ this.filename ].results[ 0 ][ 'class' ] + '.' + prop.name, legacy: prop.legacy };
 
 			} );
 
@@ -113,12 +107,12 @@ export default {
 
 		declProps: function () {
 
-			if ( ! this.content[ this.filename ] )
+			if ( ! this.content.results[ this.filename ] )
 				return [];
 
-			return this.content[ this.filename ].onlyDecl.properties.map( prop => {
+			return this.content.results[ this.filename ].results[ 0 ].onlyDecl.properties.map( prop => {
 
-				return { name: this.content[ this.filename ][ 'class' ] + '.' + prop.name, legacy: prop.legacy };
+				return { name: this.content.results[ this.filename ].results[ 0 ][ 'class' ] + '.' + prop.name, legacy: prop.legacy };
 
 			} );
 
@@ -136,28 +130,31 @@ export default {
 			if ( Object.keys( this.content ).includes( 'Loading...' ) )
 				return {};
 
-			const filesAll = Object.keys( this.content ).sort();
+			const filesAll = Object.keys( this.content.results ).sort();
 
 			return filesAll.reduce( ( all, file ) => {
 
-				if ( ! this.content[ file ].onlySource || ! this.content[ file ].onlyDecl )
-					return all;
+				let counter;
 
-				if ( ! this.content[ file ].onlySource.methods || ! this.content[ file ].onlyDecl.methods ||
-						! this.content[ file ].onlySource.properties || ! this.content[ file ].onlyDecl.properties )
+				if ( ! this.content.results[ file ].results[ 0 ].onlySource || ! this.content.results[ file ].results[ 0 ].onlyDecl )
+					counter = 0;
+				else if ( ! this.content.results[ file ].results[ 0 ].onlySource.methods || ! this.content.results[ file ].results[ 0 ].onlyDecl.methods ||
+						! this.content.results[ file ].results[ 0 ].onlySource.properties || ! this.content.results[ file ].results[ 0 ].onlyDecl.properties )
 					return all;
-
-				const counter = this.content[ file ].onlySource.methods.length +
-						this.content[ file ].onlySource.properties.length +
-						this.content[ file ].onlyDecl.methods.length +
-						this.content[ file ].onlyDecl.properties.length;
+				else if ( this.content.results[ file ].errors.length === 0 )
+					counter = this.content.results[ file ].results[ 0 ].onlySource.methods.length +
+						this.content.results[ file ].results[ 0 ].onlySource.properties.length +
+						this.content.results[ file ].results[ 0 ].onlyDecl.methods.length +
+						this.content.results[ file ].results[ 0 ].onlyDecl.properties.length;
+				else
+					counter = '???';
 
 				all[ file ] = {
-					hide: ( counter === 0 && ! this.content[ file ].error && ! this.content[ file ].warning ),
+					hide: ( counter === 0 && this.content.results[ file ].errors.length === 0 ),
 					name: file,
 					decoration: { text: counter, class: 'bg-warning' },
-					error: this.content[ file ].error,
-					warning: this.content[ file ].warning
+					error: this.content.results[ file ].errors.length > 0,
+					warning: false
 				};
 
 				return all;
@@ -201,19 +198,22 @@ export default {
 
 					const raw = await this._fetchFilesOfRevision( this.revision );
 
-					this.content = Object.keys( raw ).reduce( ( all, file ) => {
+					this.content = Object.keys( raw.results ).reduce( ( all, file ) => {
 
-						const classes = Object.keys( raw[ file ] ) || [ file ];
+						const classes = raw.results[ file ].results.map( r => r.name ) || [ file ];
 
-						classes.forEach( klass => {
+						classes.forEach( ( klass, index ) => {
 
-							all[ `${file} : ${klass}` ] = { 'class': klass, ...raw[ file ][ klass ] };
+							all.results[ `${file} : ${klass}` ] = {
+								errors: raw.results[ file ].errors,
+								results: [ { 'class': klass, ...raw.results[ file ].results[ index ] } ]
+							};
 
 						} );
 
 						return all;
 
-					}, {} );
+					}, { errors: [], results: {} } );
 
 
 				} else

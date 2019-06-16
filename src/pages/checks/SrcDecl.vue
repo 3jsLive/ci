@@ -13,13 +13,14 @@
         @selected="selectedFilename = $event"
       />
       <div
-        v-if="content[ filename ]"
+        v-if="filename !== '' && content.results[ filename ] && content.results[ filename ].results.length > 0 || content.results[ filename ].errors.length > 0"
         class="flex-fill h-100 ml-4 pl-0"
         style="width: 500px;overflow: scroll;max-width: 100%"
       >
         <WarningErrorMembers
-          :data="content[ filename ]"
+          :data="content.results[ filename ]"
           title=""
+          :shortname-to-table-caption="shortnameToTableCaption"
         />
       </div>
     </div>
@@ -28,8 +29,8 @@
 
 <script>
 
-const WarningErrorMembers = () => import( /* webpackChunkName: "WarningErrorMembers" */ '@/src/components/WarningErrorMembers.vue' );
-const FilesList = () => import( /* webpackChunkName: "FilesList" */ '@/src/components/FilesList.vue' );
+import WarningErrorMembers from '@/src/components/WarningErrorMembers.vue';
+import FilesList from '@/src/components/FilesList.vue';
 
 // const API_URL = 'http://localhost:8855';
 const API_URL = '/api';
@@ -67,7 +68,6 @@ export default {
 
 			shortnameToTableCaption: {
 				onlySource: 'Only in the source file',
-				diff: 'In both files but with two (possibly) different types',
 				onlyDecl: 'Only in the declaration file'
 			}
 
@@ -89,21 +89,26 @@ export default {
 			if ( Object.keys( this.content ).includes( 'Loading...' ) )
 				return {};
 
-			const filesAll = Object.keys( this.content ).sort();
+			const filesAll = Object.keys( this.content.results ).sort();
 
 			return filesAll.reduce( ( all, file ) => {
 
-				const counter = this.content[ file ].onlySource.methods.length +
-					this.content[ file ].onlyDecl.methods.length +
-					this.content[ file ].onlySource.properties.length +
-					this.content[ file ].onlyDecl.properties.length;
+				let counter;
+
+				if ( this.content.results[ file ].results.length === 0 )
+					counter = 0;
+				else
+					counter = this.content.results[ file ].results[ 0 ].onlySource.methods.length +
+					this.content.results[ file ].results[ 0 ].onlyDecl.methods.length +
+					this.content.results[ file ].results[ 0 ].onlySource.properties.length +
+					this.content.results[ file ].results[ 0 ].onlyDecl.properties.length;
 
 				all[ file ] = {
-					hide: ( counter === 0 && ! this.content[ file ].error && ! this.content[ file ].warning ),
+					hide: ( counter === 0 && this.content.results[ file ].errors.length === 0 ),
 					name: file,
 					decoration: { text: counter, class: 'bg-warning' },
-					error: this.content[ file ].error,
-					warning: this.content[ file ].warning
+					error: this.content.results[ file ].errors.length > 0,
+					warning: false
 				};
 
 				return all;

@@ -56,7 +56,7 @@ export default {
 		ignoredNames: {
 			type: Array,
 			required: false,
-			default: ( ) => [ 'error', 'warning', 'class' ]
+			default: ( ) => [ 'error', 'warning', 'class', 'name' ]
 		},
 		title: {
 			type: String,

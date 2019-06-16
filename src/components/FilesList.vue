@@ -108,7 +108,8 @@ export default {
 		// .then( () => {
 
 		// oh god
-		return setTimeout( () => this.$refs[ this.selectedFilename ][ 0 ].scrollIntoView(), 500 );
+		if ( this.selectedFilename )
+			return setTimeout( () => this.$refs[ this.selectedFilename ][ 0 ].scrollIntoView(), 500 );
 
 		// } );
 
