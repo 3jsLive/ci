@@ -7,11 +7,11 @@ import 'popper.js';
 
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap.native/dist/bootstrap-native-v4';
 
-import App from './App.vue';
-// import docsdecl from './DocsDecl.vue';
-// import srcdecl from './SrcDecl.vue';
-// import objdecl from './ObjDecl.vue';
+// import App from './App.vue';
+const App = () => import( /* webpackChunkName: "App" */ './App.vue' );
+
 
 import VueRouter from 'vue-router';
 import store from './store';
@@ -38,38 +38,58 @@ dom.watch(); // This will kick of the initial replacement of i to svg tags and c
 
 
 // checks
-const docsdecl = resolve => require( [ '@/src/pages/checks/DocsDecl.vue' ], resolve );
-const srcdecl = resolve => require( [ '@/src/pages/checks/SrcDecl.vue' ], resolve );
-const objdecl = resolve => require( [ '@/src/pages/checks/ObjDecl.vue' ], resolve );
-const checkWithTS = resolve => require( [ '@/src/pages/checks/TSCompiler.vue' ], resolve );
-const checkDocsExamples = resolve => require( [ '@/src/pages/checks/DocsExamples.vue' ], resolve );
-const checkDocsExternals = resolve => require( [ '@/src/pages/checks/DocsExternals.vue' ], resolve );
-const checkNonDocsExternals = resolve => require( [ '@/src/pages/checks/NonDocsExternals.vue' ], resolve );
-const unittests = resolve => require( [ '@/src/pages/checks/UnitTests.vue' ], resolve );
+const docsdecl = () => import( /* webpackChunkName: "docsdecl" */ './pages/checks/DocsDecl.vue' );
+const srcdecl = () => import( /* webpackChunkName: "srcdecl" */ './pages/checks/SrcDecl.vue' );
+const objdecl = () => import( /* webpackChunkName: "objdecl" */ './pages/checks/ObjDecl.vue' );
+const checkWithTS = () => import( /* webpackChunkName: "checkWithTS" */ './pages/checks/TSCompiler.vue' );
+const checkDocsExamples = () => import( /* webpackChunkName: "checkDocsExamples" */ './pages/checks/DocsExamples.vue' );
+const checkDocsExternals = () => import( /* webpackChunkName: "checkDocsExternals" */ './pages/checks/DocsExternals.vue' );
+const checkNonDocsExternals = () => import( /* webpackChunkName: "checkNonDocsExternals" */ './pages/checks/NonDocsExternals.vue' );
+const unittests = () => import( /* webpackChunkName: "unittests" */ './pages/checks/UnitTests.vue' );
 
 // linters
-const linters = resolve => require( [ '@/src/linters.vue' ], resolve );
-const linterDoobsDoc = resolve => require( [ '@/src/pages/linters/DoobsDoc.vue' ], resolve );
-const linterHtml = resolve => require( [ '@/src/pages/linters/HTMLLint.vue' ], resolve );
-const linterCss = resolve => require( [ '@/src/pages/linters/StyleLint.vue' ], resolve );
-const linterEslintCodeTags = resolve => require( [ '@/src/pages/linters/ESLintCodeTags.vue' ], resolve );
-const linterEslintScriptTags = resolve => require( [ '@/src/pages/linters/ESLintScriptTags.vue' ], resolve );
-const linterEslintJsFiles = resolve => require( [ '@/src/pages/linters/ESLintJsFiles.vue' ], resolve );
-const linterEslintTsFiles = resolve => require( [ '@/src/pages/linters/ESLintTsFiles.vue' ], resolve );
+const linters = () => import( /* webpackChunkName: "linters" */ './linters.vue' );
+const linterDoobsDoc = () => import( /* webpackChunkName: "linterDoobsDoc" */ './pages/linters/DoobsDoc.vue' );
+const linterHtml = () => import( /* webpackChunkName: "linterHtml" */ './pages/linters/HTMLLint.vue' );
+const linterCss = () => import( /* webpackChunkName: "linterCss" */ './pages/linters/StyleLint.vue' );
+const linterEslintCodeTags = () => import( /* webpackChunkName: "linterEslintCodeTags" */ './pages/linters/ESLintCodeTags.vue' );
+const linterEslintScriptTags = () => import( /* webpackChunkName: "linterEslintScriptTags" */ './pages/linters/ESLintScriptTags.vue' );
+const linterEslintJsFiles = () => import( /* webpackChunkName: "linterEslintJsFiles" */ './pages/linters/ESLintJsFiles.vue' );
+const linterEslintTsFiles = () => import( /* webpackChunkName: "linterEslintTsFiles" */ './pages/linters/ESLintTsFiles.vue' );
 
 // notifiers
-const checkNpm = resolve => require( [ '@/src/pages/notifiers/CheckNPM.vue' ], resolve );
+const checkNpm = () => import( /* webpackChunkName: "checkNpm" */ './pages/notifiers/CheckNPM.vue' );
 
 // general
-const run = resolve => require( [ '@/src/Run.vue' ], resolve );
-const home = resolve => require( [ '@/src/Home.vue' ], resolve );
-const NavBar = resolve => require( [ '@/src/components/Navbar.vue' ], resolve );
-
-// const list = resolve => require( [ './List.vue' ], resolve );
+// const run = resolve => require( [ '@/src/Run.vue' ], resolve );
+// const home = resolve => require( [ '@/src/Home.vue' ], resolve );
+// const NavBar = resolve => require( [ '@/src/components/Navbar.vue' ], resolve );
 
 // convenience
 const propsRun = ( route ) => ( { run: Number.parseInt( route.params.run ) } );
 const propsRunFilename = ( route ) => ( { filename: route.query.filename, run: Number.parseInt( route.params.run ) } );
+
+const Run = () => import( /* webpackChunkName: "Run" */ './Run.vue' );
+const Home = () => import( /* webpackChunkName: "Home" */ './Home.vue' );
+
+// components
+const NavBar = () => import( /* webpackChunkName: "NavBar" */ './components/Navbar.vue' );
+// const FilesList = () => import( /* webpackChunkName: "FilesList" */ './components/FilesList.vue' );
+// const HistoryList = () => import( /* webpackChunkName: "HistoryList" */ './components/HistoryList.vue' );
+// const NotableChanges = () => import( /* webpackChunkName: "NotableChanges" */ './components/NotableChanges.vue' );
+// const OverviewTable = () => import( /* webpackChunkName: "OverviewTable" */ './components/OverviewTable.vue' );
+// const ResultsTableRow = () => import( /* webpackChunkName: "ResultsTableRow" */ './components/ResultsTableRow.vue' );
+// const RunInfo = () => import( /* webpackChunkName: "RunInfo" */ './components/RunInfo.vue' );
+
+
+const components = {
+	Run, Home,
+	docsdecl, srcdecl, objdecl, checkWithTS, checkDocsExamples, checkDocsExternals, checkNonDocsExternals, checkNpm, unittests,
+	linters,
+	linterDoobsDoc, linterHtml, linterCss, linterEslintCodeTags, linterEslintScriptTags, linterEslintJsFiles, linterEslintTsFiles,
+	NavBar/* , FilesList, HistoryList, NotableChanges, OverviewTable, ResultsTableRow, RunInfo */
+};
+
 
 const routes = [
 	{
@@ -82,12 +102,12 @@ const routes = [
 	},
 	{
 		path: '/runs',
-		components: { navbar: NavBar, default: home },
+		components: { navbar: NavBar, default: Home },
 		name: 'home'
 	},
 	{
 		path: '/runs/:run([0-9]+)',
-		components: { navbar: NavBar, default: run },
+		components: { navbar: NavBar, default: Run },
 		name: 'run',
 		props: {
 			navbar: propsRun,
@@ -323,6 +343,7 @@ boost( hc );
 Vue.use( HighchartsVue );
 
 const app = new Vue( {
+	components,
 	render: h => h( App ),
 	router,
 	store
