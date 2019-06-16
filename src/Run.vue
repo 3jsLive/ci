@@ -80,10 +80,10 @@
 
 <script>
 
-import OverviewTable from '@/src/components/OverviewTable.vue';
-import NotableChanges from '@/src/components/NotableChanges.vue';
-import RunInfo from '@/src/components/RunInfo.vue';
-import HistoryList from '@/src/components/HistoryList.vue';
+const HistoryList = () => import( /* webpackChunkName: "HistoryList" */ '@/src/components/HistoryList.vue' );
+const NotableChanges = () => import( /* webpackChunkName: "NotableChanges" */ '@/src/components/NotableChanges.vue' );
+const OverviewTable = () => import( /* webpackChunkName: "OverviewTable" */ '@/src/components/OverviewTable.vue' );
+const RunInfo = () => import( /* webpackChunkName: "RunInfo" */ '@/src/components/RunInfo.vue' );
 
 
 // const API_URL = 'http://localhost:8855';
