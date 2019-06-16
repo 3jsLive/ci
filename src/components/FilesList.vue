@@ -48,8 +48,8 @@
 
 <script>
 
-import Vue from 'vue';
-import { setTimeout } from 'timers';
+// import Vue from 'vue';
+// import { setTimeout } from 'timers';
 
 export default {
 
@@ -104,13 +104,13 @@ export default {
 
 		this.selectedFilename = this.selected;
 
-		Vue.nextTick()
-			.then( () => {
+		// Vue.nextTick()
+		// .then( () => {
 
-				// oh god
-				return setTimeout( () => this.$refs[ this.selectedFilename ][ 0 ].scrollIntoView(), 500 );
+		// oh god
+		return setTimeout( () => this.$refs[ this.selectedFilename ][ 0 ].scrollIntoView(), 500 );
 
-			} );
+		// } );
 
 	},
 
