@@ -33,8 +33,8 @@ module.exports = {
 				template: './public/index.html',
 				chunks: [ 'chunk-vendors', 'chunk-common', 'main' ]
 			} )
-		],
-		devtool: 'eval-source-map'
+		]
+		// devtool: 'eval-source-map'
 	},
 	chainWebpack: config => {
 
