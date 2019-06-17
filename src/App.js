@@ -19,15 +19,14 @@ import store from './store';
 
 
 
-import { library, dom } from '@fortawesome/fontawesome-svg-core';
-import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 library.add( faExclamationCircle );
 
 Vue.component( 'font-awesome-icon', FontAwesomeIcon );
 
-dom.watch(); // This will kick of the initial replacement of i to svg tags and configure a MutationObserver
 
 
 
