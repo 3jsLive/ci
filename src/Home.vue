@@ -51,7 +51,7 @@
                         <td>{{ run.sha }}</td>
                         <td>{{ run.timestamp | prettyDate }}</td>
                         <td>{{ run.reason }}</td>
-                        <td>{{ ( run.errorJson ) ? run.errorJson : '–' }}</td>
+                        <td>{{ run.majorErrors }}</td>
                       </template>
                     </tr>
                   </tbody>

@@ -34,11 +34,7 @@
                 </router-link>
               </td>
             </tr>
-            <tr>
-              <td>Errors</td><td>
-                <span class="bg-warning">TODO</span>
-              </td>
-            </tr>
+            <tr><td>Worker errors</td><td>{{ runInfo.majorErrors }}</td></tr>
             <!-- <tr><td>Dependencies recalculated</td><td><span class="bg-warning">TODO</span>{{ runInfo.dependenciesChanged }}</td></tr> -->
             <tr><td>Machine</td><td>{{ runInfo.info }}</td></tr>
           </tbody>
