@@ -56,6 +56,9 @@ const linterEslintTsFiles = () => import( /* webpackChunkName: "linterEslintTsFi
 // notifiers
 const checkNpm = () => import( /* webpackChunkName: "checkNpm" */ './pages/notifiers/CheckNPM.vue' );
 
+// dependencies
+const depsDocsDocs = () => import( /* webpackChunkName: "depsDocsDocs" */ './pages/dependencies/DocsDocsDeps.vue' );
+
 // general
 // const run = resolve => require( [ '@/src/Run.vue' ], resolve );
 // const home = resolve => require( [ '@/src/Home.vue' ], resolve );
@@ -249,6 +252,15 @@ const routes = [
 		components: { navbar: NavBar, default: unittests },
 		name: 'unittests',
 		props: propsRun
+	},
+	{
+		path: '/runs/:run([0-9]+)/dependencies/DocsDocsDeps',
+		components: { navbar: NavBar, default: depsDocsDocs },
+		name: 'depsDocsDocs',
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
 	},
 	// {
 	// 	path: '/runs/:run([0-9]+)/list/:test',
