@@ -312,7 +312,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 
 .v-datatable-light .header-item {
   cursor: pointer;
