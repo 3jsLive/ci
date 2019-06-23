@@ -13,7 +13,7 @@
         @selected="selectedFilename = $event"
       />
       <div
-        v-if="filename !== '' && content.results[ filename ] && content.results[ filename ].results.length > 0 || content.results[ filename ].errors.length > 0"
+        v-if="filename !== '' && content.results[ filename ] && ( content.results[ filename ].results.length > 0 || content.results[ filename ].errors.length > 0 )"
         class="flex-fill h-100 ml-4 pl-0"
         style="width: 500px;overflow: scroll;max-width: 100%"
       >
