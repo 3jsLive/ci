@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
     <!-- <a
@@ -23,33 +24,78 @@
           aria-haspopup="true"
           aria-expanded="false"
         >
-          {{ ( run > 0 ) ? `Run: #${run}` : 'Run: #---' }}
+          {{ ( currentRunId > 0 ) ? `Run: #${currentRunId}` : 'Run: #---' }}
         </a>
-        <!-- <div
+        <div
           class="dropdown-menu"
           aria-labelledby="navbarDropdownChecks"
+          style="width: 400%"
         >
-          <span class="ml-2">
-            QuickInfo
-          </span>
-          <div class="dropdown-divider" />
-          <div class="ml-2">
-			Revision: 0xf00<br />
-			Date:<br />
-			Author:<br />
-			Text:
-          </div>
-        </div> -->
+          <template v-if="quickInfo">
+            <span class="ml-2">
+              Based on the following git commit
+            </span>
+            <div class="dropdown-divider" />
+            <pre class="dropdown-item-text">{{ quickInfo.author.date }}</pre>
+            <pre class="dropdown-item-text">{{ quickInfo.author.name }}</pre>
+            <pre class="dropdown-item-text">{{ quickInfo.message }}</pre>
+          </template>
+        </div>
       </li>
       <li class="nav-item">
         <router-link
-          :to="`/runs/${run}`"
+          :to="`/runs/${currentRunId}`"
           class="nav-link"
         >
           Overview
         </router-link>
       </li>
-      <li class="nav-item dropdown">
+      <template v-for="group of Object.keys( testsByGroup )">
+        <li
+          :key="group"
+          class="nav-item dropdown"
+        >
+          <a
+            id="navbarDropdownChecks"
+            class="nav-link dropdown-toggle text-white text-capitalize"
+            href="#"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            {{ group }}
+          </a>
+          <div
+            class="dropdown-menu"
+            :aria-labelledby="`navbarDropdown${group}`"
+          >
+            <router-link
+              :to="`/runs/${currentRunId}/${group}`"
+              class="dropdown-item disabled"
+            >
+              Summary
+            </router-link>
+            <div class="dropdown-divider" />
+            <template v-for="( test ) of testsByGroup[ group ]">
+              <router-link
+                v-if="test.status !== 'off'"
+                :key="test.name"
+                :to="`/runs/${currentRunId}/${group}/${test.name}`"
+                class="dropdown-item"
+
+                v-html="`${bracketize( test.description )}<br><em class='small'>${test.text || ''}</em>`"
+              /><span
+                v-else
+                :key="test.name"
+                class="dropdown-item disabled"
+                v-html="`${bracketize( test.description )}<br><em class='small'>${test.text || ''}</em>`"
+              />
+            </template>
+          </div>
+        </li>
+      </template>
+      <!-- <li class="nav-item dropdown">
         <a
           id="navbarDropdownChecks"
           class="nav-link dropdown-toggle text-white"
@@ -204,7 +250,7 @@
           tabindex="-1"
           aria-disabled="true"
         >Dependencies</a>
-      </li>
+      </li> -->
       <li class="border-1 border-left ml-3 pl-3 nav-item">
         <a
           class="nav-link disabled"
@@ -228,6 +274,8 @@
 <script>
 
 // import VueBootstrapTypeahead from './VueBootstrapTypeahead';
+import { mapGetters } from 'vuex';
+
 
 export default {
 
@@ -237,18 +285,54 @@ export default {
 		// VueBootstrapTypeahead
 	},
 
-	props: {
-		'run': {
-			type: Number,
-			default: 0,
-			required: false,
-			validator: ( value ) => Number.isInteger( value )
-		}
-	},
-
 	data() {
 
 		return {};
+
+	},
+
+	computed: {
+
+		...mapGetters( [
+			'currentRunId',
+			'tests',
+			'quickInfo'
+		] ),
+
+		testsByGroup: function () {
+
+			if ( ! this.tests )
+				return {};
+
+			return this.tests.reduce( ( all, test ) => {
+
+				all[ test.group ] = all[ test.group ] || [];
+				all[ test.group ].push( test );
+
+				return all;
+
+			}, {} );
+
+		}
+
+	},
+
+	created() {
+
+		this.$store.dispatch( 'pullRunData' );
+
+	},
+
+	methods: {
+
+		bracketize( val ) {
+
+			if ( val )
+				return val.replace( /</g, '&lt;' ).replace( />/g, '&gt;' );
+			else
+				return val;
+
+		}
 
 	}
 
@@ -259,6 +343,9 @@ export default {
 <style scoped>
 .dropdown-menu > .dropdown-item:not(.active):hover {
     background-color: lightgray;
+}
+.dropdown-menu > .dropdown-item.disabled {
+    color: lightgray;
 }
 </style>
 

@@ -31,13 +31,13 @@
           :ref="f.raw"
           type="button"
           class="list-group-item-action list-group-item d-flex justify-content-between align-items-center py-1"
-          :class="{ active: selectedFilename === f.raw, 'bg-warning text-dark': f.warning || false, 'bg-danger text-white': f.error || false }"
+          :class="{ active: currentFile === f.raw, 'bg-warning text-dark': f.warning || false, 'bg-danger text-white': f.error || false }"
           @mousedown="mousedown( f.raw )"
         >
           <span v-html="f.markup" />
           <span
             v-if="f.decoration && ! f.error"
-            :class="[{ 'text-dark': selectedFilename === f.raw }, f.decoration.class ]"
+            :class="[{ 'text-dark': currentFile === f.raw }, f.decoration.class ]"
             class="badge btn-lg badge-pill"
           >{{ f.decoration.text }}</span>
         </button>
@@ -48,8 +48,7 @@
 
 <script>
 
-// import Vue from 'vue';
-// import { setTimeout } from 'timers';
+import { mapGetters } from 'vuex';
 
 export default {
 
@@ -66,10 +65,6 @@ export default {
 		'files': {
 			type: Object,
 			default: () => ( {} )
-		},
-		'selected': {
-			type: String,
-			default: ''
 		}
 	},
 
@@ -77,51 +72,25 @@ export default {
 
 		return {
 
-			query: '',
-			selectedFilename: ''
+			query: ''
 
 		};
 
 	},
 
-	watch: {
-
-		selected: function () {
-
-			this.selectedFilename = this.selected;
-
-		}
-
-	},
-
-	created() {
-
-		this.selectedFilename = this.selected;
-
-	},
-
-	mounted() {
-
-		this.selectedFilename = this.selected;
-
-		// Vue.nextTick()
-		// .then( () => {
-
-		// oh god
-		if ( this.selectedFilename )
-			return setTimeout( () => this.$refs[ this.selectedFilename ][ 0 ].scrollIntoView(), 500 );
-
-		// } );
-
+	computed: {
+		...mapGetters( [
+			'currentFile'
+		] )
 	},
 
 	methods: {
 
 		mousedown: function ( raw ) {
 
-			this.selectedFilename = raw;
+			this.$router.push( { query: { ...this.$router.query, filename: raw } } );
 
-			this.$emit( 'selected', raw );
+			// this.$emit( 'selected', raw );
 
 		},
 

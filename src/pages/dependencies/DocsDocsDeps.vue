@@ -6,11 +6,10 @@
     >
       <div class="col-4 h-100">
         <FilesList
-          v-if="revision && content"
+          v-if="content"
           :files="filesWithCounter"
-          :selected="selectedFilename"
+          :selected="currentFile"
           style="z-index: 0"
-          @selected="selectedFilename = $event"
         />
       </div>
       <div class="col h-100">
@@ -38,7 +37,15 @@
               :sort-field="sortField"
               :sort="sortDir"
               @onUpdate="dtUpdateSort"
-            />
+            >
+              <div
+                slot="spinner"
+                class="spinner-border"
+                role="status"
+              >
+                <span class="sr-only">Loading...</span>
+              </div>
+            </DataTable>
           </template>
         </div>
       </div>
@@ -50,6 +57,9 @@
 
 import { DataTable } from 'v-datatable-light';
 const FilesList = () => import( /* webpackChunkName: "FilesList" */ '@/src/components/FilesList.vue' );
+
+import { mapGetters } from 'vuex';
+import store from '../../store';
 
 const API_URL = '/api';
 
@@ -63,29 +73,13 @@ export default {
 		FilesList
 	},
 
-	props: {
-		'filename': {
-			type: String,
-			default: ''
-		},
-		'run': {
-			type: Number,
-			default: 1,
-			required: true
-		}
-	},
-
 	data: function () {
 
 		return {
-			runInfo: {},
-
 			sortField: 'line',
 			sortDir: 'asc',
 
 			content: '',
-
-			selectedFilename: '',
 
 			tableCss: {
 				table: 'table table-bordered table-hover table-striped table-center w-100',
@@ -116,17 +110,11 @@ export default {
 
 		},
 
-		revision: function () {
-
-			return this.runInfo.sha;
-
-		},
-
 		tableData: function () {
 
-			if ( this.content && this.filename && this.content.results ) {
+			if ( this.content && this.currentFile && this.content.results ) {
 
-				const data = this.content.results[ this.filename ].results || [];
+				const data = this.content.results[ this.currentFile ].results || [];
 
 				if ( this.sortField === 'message' ) {
 
@@ -168,13 +156,13 @@ export default {
 
 		showError: function ( ) {
 
-			if ( this.content && this.filename &&
+			if ( this.content && this.currentFile &&
 				this.content.results &&
-				this.content.results[ this.filename ] &&
-				this.content.results[ this.filename ].errors.length > 0
+				this.content.results[ this.currentFile ] &&
+				this.content.results[ this.currentFile ].errors.length > 0
 			) {
 
-				const errors = this.content.results[ this.filename ].errors;
+				const errors = this.content.results[ this.currentFile ].errors;
 
 				const errorsText = errors.map( err => {
 
@@ -226,84 +214,147 @@ export default {
 
 			}, {} );
 
-		}
+		},
+
+		...mapGetters( [
+			'runInfo',
+			'currentFile',
+			'currentRunId',
+			'testData'
+		] )
 
 	},
 
-	watch: {
+	mounted() {
 
-		filename: function () {
+		// console.log( 'pulling because mounted' );
 
-			this.selectedFilename = this.filename;
+		// this.$store.dispatch( 'pullTestData' );
 
-		},
+	},
 
-		// selected filename changed, update nagivation
-		selectedFilename: function ( /* file */ ) {
+	// beforeRouteEnter( to, from, next ) {
 
-			if ( this.filename !== this.selectedFilename ) {
+	// 	Promise.all( [
+	// 		store.dispatch( 'pullTestData' )
+	// 	] ).then( () => {
 
-				const params = { run: this.run };
+	// 		console.log( 'after beforeRouteEnter', this.testData );
 
-				const query = ( this.selectedFilename && this.revision ) ? { filename: this.selectedFilename } : {};
+	// 		next();
 
-				this.$router.push( { name: 'depsDocsDocs', params, query } );
+	// 	} );
 
-			}
+	// },
 
-		},
+	async beforeRouteUpdate( to, from, next ) {
 
-		revision: async function ( rev ) {
+		// Reset state if user goes from /editor/:id to /editor
+		// The component is not recreated so we use to hook to reset the state.
 
-			if ( rev && rev.length > 0 ) {
+		if ( to.params.run === from.params.run ) {
 
-				if ( ! this.content || Object.keys( this.content ).length === 0 ) {
+			console.log( 'same runId' );
 
-					this.content = { "Loading...": true };
-					this.content = await this._fetchFilesOfRevision( this.revision );
+		} else {
 
-				} else
-					console.log( 'content already loaded' );
+			console.log( 'different runId' );
+
+			const newData = await store.dispatch( 'pullTestData', { runId: to.params.run } );
+			this.content = newData;
+
+		}
+
+		if ( to.query.filename && from.query.filename ) {
+
+			if ( to.query.filename === from.query.filename ) {
+
+				console.log( 'same file selected' );
 
 			} else {
 
-				this.content = '';
+				console.log( 'different file selected' );
 
 			}
 
+		} else {
+
+			console.log( 'different files selected (or none at all)' );
+
 		}
+		// console.info( 'beforeRouteUpdate', to.params.run );
+		// await store.dispatch( 'pullTestData', { runId: to.params.run } );
+		// this.content = this.testData;
+		return next();
 
 	},
+	async beforeRouteEnter( to, from, next ) {
 
-	created() {
+		// SO: https://github.com/vuejs/vue-router/issues/1034
+		// If we arrive directly to this url, we need to fetch the article
 
-		this.pullRunInfo();
+		return next( async vm => {
 
-		this.selectedFilename = this.filename;
+			// from here on out, 'vm' is the instanced component (i.e. 'this' otherwise)
 
-		console.log( { selectedFilename: this.selectedFilename } );
+			return await store.dispatch( 'pullRunData' )
+				.then( foo => {
 
-	},
+					console.log( { foo } );
 
-	methods: {
-
-		// TODO: replace with vuex (store)
-		pullRunInfo() {
-
-			return fetch( `${API_URL}/runInfo/${this.run}` )
-				.then( res => res.json() )
-				.then( runInfo => {
-
-					this.runInfo = runInfo;
-
-					console.log( { runInfo } );
-
-					return true;
+					return store.dispatch( 'pullTestData', { runId: to.params.run } );
 
 				} )
-				.catch( err => console.error( 'runInfo request:', err ) );
+				.then( bar => {
 
-		},
+					console.log( { bar } );
+					vm.content = bar; //vm.testData;
+
+					console.log( vm );
+					return bar;
+
+				} );
+
+		} );
+
+	},
+	async beforeRouteLeave( to, from, next ) {
+
+		console.info( 'beforeRouteLeave', to.params.run );
+		// await store.dispatch( 'pullTestData' );
+		// this.content = this.testData;
+		next();
+
+	},
+
+
+	// async created() {
+
+	// 	console.log( 'pulling because created' );
+
+	// 	const start = ( this.runInfo ) ? Promise.resolve( true ) : this.$store.dispatch( 'pullRunData' );
+
+	// 	return start
+	// 		.then( async () => {
+
+	// 			if ( this.testData )
+	// 				return Promise.resolve( true );
+	// 			else
+	// 				return await this.$store.dispatch( 'pullTestData' );
+
+	// 		} ).then( () => {
+
+	// 			this.content = this.testData;
+
+	// 			console.log( 'testData', this.testData );
+
+	// 			return Promise.resolve( true );
+
+	// 		} );
+
+	// },
+
+	methods: {
 
 		dtUpdateSort: function ( { sortField, sort } ) {
 

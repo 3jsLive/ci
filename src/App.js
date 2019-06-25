@@ -16,6 +16,8 @@ const App = () => import( /* webpackChunkName: "App" */ './App.vue' );
 import VueRouter from 'vue-router';
 import store from './store';
 
+import { sync } from 'vuex-router-sync';
+
 
 
 
@@ -290,6 +292,10 @@ const router = new VueRouter( {
 	linkActiveClass: 'active',
 	routes
 } );
+
+/* const unsync =  */sync( store, router );
+
+export default router;
 
 
 Vue.prototype.$eventBus = new Vue();

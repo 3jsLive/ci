@@ -124,6 +124,8 @@
 
 <script>
 
+import { mapGetters } from 'vuex';
+
 const ResultsTableRow = () => import( /* webpackChunkName: "ResultsTableRow" */ '@/src/components/ResultsTableRow.vue' );
 
 // const API_URL = 'http://localhost:8855';
@@ -138,20 +140,7 @@ export default {
 		ResultsTableRow
 	},
 
-	props: {
-		'data': {
-			type: Object,
-			default: () => ( {} )
-		},
-		'run': {
-			type: Number,
-			default: 0
-		},
-		'history': {
-			type: Array,
-			default: () => ( [] )
-		}
-	},
+	props: {},
 
 	data: function () {
 
@@ -162,6 +151,17 @@ export default {
 			detailsStatus: {}
 
 		};
+
+	},
+
+	computed: {
+
+		...mapGetters( [
+			'currentRunId',
+			'overview',
+			'history',
+			'sparkline'
+		] )
 
 	},
 
@@ -227,7 +227,7 @@ export default {
 
 		prepResultsTableRowData( testGroup, testName, name ) {
 
-			const data = ( this.data[ testName ] ) ? this.data[ testName ] : {
+			const data = ( this.overview[ testName ] ) ? this.overview[ testName ] : {
 				errors: 0,
 				result: '-',
 				parent: '-',
@@ -236,26 +236,17 @@ export default {
 				baselineDelta: '-'
 			};
 
-			const history = this.history.map( run => {
-
-				const json = JSON.parse( run.overviewJson || '{}' );
-
-				if ( json[ testName ] )
-					return [ `${run.name}`, json[ testName ].result ];
-				else
-					return [ `${run.name}`, null ];
-
-			} );
+			const sparkline = ( this.sparkline && this.sparkline[ testName ] ) ? Object.entries( this.sparkline[ testName ] ) : [];
 
 			return {
-				run: this.run,
+				run: this.currentRunId,
 				test: testName,
 				errors: data.errors,
 
 				linkTarget: `${testGroup}/${testName}`,
 				linkText: name,
 
-				history: history,
+				history: sparkline,
 
 				name: name,
 				result: data.result,
@@ -273,7 +264,7 @@ export default {
 
 		pullAndSetDetailedOverview( test, amount ) {
 
-			return fetch( `${API_URL}/detailedOverview/${this.run}/${test}` )
+			return fetch( `${API_URL}/detailedOverview/${this.currentRunId}/${test}` )
 				.then( res => res.json() )
 				.then( details => {
 
@@ -390,7 +381,7 @@ export default {
 			const data = this.details[ testName ][ file ];
 
 			return {
-				run: this.run,
+				run: this.currentRunId,
 				test: testName,
 
 				linkTarget: `${testGroup}/${testName}?filename=${file}`,

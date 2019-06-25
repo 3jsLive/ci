@@ -4,7 +4,7 @@
     <div class="row flex-fill">
       <div class="col-12">
         <h2>
-          Results for run #{{ run }}, Rev: {{ runInfo.sha }}
+          Results for run #{{ currentRunId }}, Rev: {{ runInfo.sha }}
         </h2>
       </div>
     </div>
@@ -56,8 +56,8 @@
                 <div class="card-body">
                   <p class="card-text">
                     <overview-table
-                      :data="JSON.parse( runInfo.overviewJson )"
-                      :run="run"
+                      :data="overview"
+                      :run="currentRunId"
                       :history="history || []"
                     />
                   </p>
@@ -80,10 +80,15 @@
 
 <script>
 
-const HistoryList = () => import( /* webpackChunkName: "HistoryList" */ '@/src/components/HistoryList.vue' );
-const NotableChanges = () => import( /* webpackChunkName: "NotableChanges" */ '@/src/components/NotableChanges.vue' );
-const OverviewTable = () => import( /* webpackChunkName: "OverviewTable" */ '@/src/components/OverviewTable.vue' );
-const RunInfo = () => import( /* webpackChunkName: "RunInfo" */ '@/src/components/RunInfo.vue' );
+import HistoryList from '@/src/components/HistoryList.vue';
+import NotableChanges from '@/src/components/NotableChanges.vue';
+import OverviewTable from '@/src/components/OverviewTable.vue';
+import RunInfo from '@/src/components/RunInfo.vue';
+
+import { mapState } from 'vuex';
+import { mapActions } from 'vuex';
+import { mapMutations } from 'vuex';
+import { mapGetters } from 'vuex';
 
 
 // const API_URL = 'http://localhost:8855';
@@ -125,19 +130,14 @@ export default {
 	},
 
 	props: {
-		'run': {
-			type: Number,
-			default: 1,
-			required: true
-		}
 	},
 
 	data: function () {
 
 		return {
 			shownRun: 0,
-			runInfo: false,
-			history: false
+			// runInfo: false,
+			// history: false
 		};
 
 	},
@@ -149,16 +149,40 @@ export default {
 			const data = this.reduceToNotable( 'parent' );
 			return data.improvements.length > 0 || data.regressions.length > 0;
 
-		}
+		},
+		...mapGetters( [
+			'currentRunId',
+			'runInfo',
+			'overview',
+			'history'
+		] )
 
 	},
 
 	created() {
 
-		this.shownRun = this.run;
+		this.shownRun = this.currentRunId;
 
-		this.pullRunInfo();
-		this.pullRunHistory();
+		// this.$store.commit( 'setCurrentRunId', this.shownRun );
+		// this.setCurrentRunId( this.shownRun );
+
+
+
+
+
+
+
+
+		// only navbar now
+		// this.$store.dispatch( 'pullRunData' );
+
+
+
+
+
+
+
+		// this.pullRunData();
 
 	},
 
@@ -166,11 +190,30 @@ export default {
 
 		this.shownRun = to.params.run;
 
-		this.runInfo = false;
-		this.history = false;
+		// this.runInfo = false;
+		// this.history = false;
 
-		this.pullRunInfo();
-		this.pullRunHistory();
+		// this.pullRunInfo();
+		// this.pullRunHistory();
+
+		// this.$store.commit( 'setCurrentRunId', this.shownRun );
+		// this.setCurrentRunId( this.shownRun );
+
+
+
+
+
+
+
+		// only navbar now
+		// this.$store.dispatch( 'pullRunData' );
+
+
+
+
+
+
+		// this.pullRunData();
 
 		next();
 
@@ -178,10 +221,12 @@ export default {
 
 	methods: {
 
+		// ...mapMutations( [ 'setCurrentRunId' ] ),
+		// ...mapActions( [ 'pullRunInfo', 'pullRunData' ] ),
 		reduceToNotable( type ) {
 
 			const deltaType = type + 'Delta';
-			const data = JSON.parse( this.runInfo.overviewJson );
+			const data = this.overview;
 
 			return Object.keys( data ).reduce( ( all, cur ) => {
 
@@ -206,7 +251,7 @@ export default {
 
 		},
 
-		pullRunInfo() {
+		/* pullRunInfo() {
 
 			return fetch( `${API_URL}/runInfo/${this.shownRun}` )
 				.then( res => res.json() )
@@ -229,9 +274,9 @@ export default {
 				} )
 				.catch( err => console.error( 'runInfo request:', err ) );
 
-		},
+		}, */
 
-		pullRunHistory() {
+		/* pullRunHistory() {
 
 			return fetch( `${API_URL}/runInfo/${this.shownRun}/backstory` )
 				.then( res => res.json() )
@@ -264,7 +309,7 @@ export default {
 				} )
 				.catch( err => console.error( 'backstory request:', err ) );
 
-		}
+		} */
 
 	}
 
