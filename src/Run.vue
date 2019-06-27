@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="container-fluid d-flex flex-column">
     <div class="row flex-fill">
@@ -81,14 +80,6 @@ import NotableChanges from '@/src/components/NotableChanges.vue';
 import OverviewTable from '@/src/components/OverviewTable.vue';
 import RunInfo from '@/src/components/RunInfo.vue';
 
-import { mapState } from 'vuex';
-import { mapActions } from 'vuex';
-import { mapMutations } from 'vuex';
-import { mapGetters } from 'vuex';
-
-
-// const API_URL = 'http://localhost:8855';
-const API_URL = '/api';
 const NOTABLE_LIMIT = 0.025;
 
 
@@ -125,16 +116,11 @@ export default {
 
 	},
 
-	props: {
-	},
+	props: {},
 
 	data: function () {
 
-		return {
-			shownRun: 0,
-			// runInfo: false,
-			// history: false
-		};
+		return {};
 
 	},
 
@@ -146,13 +132,6 @@ export default {
 			return data.improvements.length > 0 || data.regressions.length > 0;
 
 		},
-
-		// ...mapGetters( {
-		// 	'getCurrentRunId': 'currentRunId',
-		// 	'getRunInfo': 'runInfo',
-		// 	'getOverview': 'overview',
-		// 	'getBackstory': 'backstory'
-		//  } )
 
 		runInfo: function () {
 
@@ -180,49 +159,8 @@ export default {
 
 	},
 
-	created() {
-
-		this.shownRun = this.currentRunId;
-
-	},
-
-	beforeRouteUpdate( to, from, next ) {
-
-		this.shownRun = to.params.run;
-
-		// this.runInfo = false;
-		// this.history = false;
-
-		// this.pullRunInfo();
-		// this.pullRunHistory();
-
-		// this.$store.commit( 'setCurrentRunId', this.shownRun );
-		// this.setCurrentRunId( this.shownRun );
-
-
-
-
-
-
-
-		// only navbar now
-		// this.$store.dispatch( 'pullRunData' );
-
-
-
-
-
-
-		// this.pullRunData();
-
-		next();
-
-  	},
-
 	methods: {
 
-		// ...mapMutations( [ 'setCurrentRunId' ] ),
-		// ...mapActions( [ 'pullRunInfo', 'pullRunData' ] ),
 		reduceToNotable( type ) {
 
 			const deltaType = type + 'Delta';
@@ -273,6 +211,4 @@ table.table > tbody > tr > td:first-of-type { text-align: left; }
 #tests-summary table.table > tbody > tr:nth-of-type(2) > th { text-align: right }
 
 table.table a.offline { text-decoration-line: line-through}
-
-
 </style>
