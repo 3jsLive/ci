@@ -6,19 +6,17 @@
       class="row d-flex align-items-stretch"
     >
       <FilesList
-        v-if="revision && content"
+        v-if="content"
         :files="filesWithCounter"
-        :selected="selectedFilename"
         style="z-index: 0"
-        @selected="selectedFilename = $event"
       />
       <div
-        v-if="filename !== '' && content.results[ filename ] && ( content.results[ filename ].results.length > 0 || content.results[ filename ].errors.length > 0 )"
+        v-if="currentFile !== '' && content.results[ currentFile ] && ( content.results[ currentFile ].results.length > 0 || content.results[ currentFile ].errors.length > 0 )"
         class="flex-fill h-100 ml-4 pl-0"
         style="width: 500px;overflow: scroll;max-width: 100%"
       >
         <WarningErrorMembers
-          :data="content.results[ filename ]"
+          :data="content.results[ currentFile ]"
           title=""
           :shortname-to-table-caption="shortnameToTableCaption"
         />
@@ -32,9 +30,7 @@
 import WarningErrorMembers from '@/src/components/WarningErrorMembers.vue';
 import FilesList from '@/src/components/FilesList.vue';
 
-// const API_URL = 'http://localhost:8855';
-const API_URL = '/api';
-
+import { mapGetters } from 'vuex';
 
 export default {
 
@@ -46,26 +42,11 @@ export default {
 	},
 
 	props: {
-		'filename': {
-			type: String,
-			default: ''
-		},
-		'run': {
-			type: Number,
-			default: 1,
-			required: true
-		}
 	},
 
 	data: function () {
 
 		return {
-			runInfo: {},
-
-			content: '',
-
-			selectedFilename: '',
-
 			shortnameToTableCaption: {
 				onlySource: 'Only in the source file',
 				onlyDecl: 'Only in the declaration file'
@@ -77,9 +58,14 @@ export default {
 
 	computed: {
 
-		revision: function () {
+		...mapGetters( [
+			'currentFile',
+			'testData'
+		] ),
 
-			return this.runInfo.sha;
+		content: function () {
+
+			return this.testData( this.$route.params.run, this.$route.name ) || {};
 
 		},
 
@@ -118,89 +104,6 @@ export default {
 		}
 
 	},
-
-	watch: {
-
-		filename: function () {
-
-			this.selectedFilename = this.filename;
-
-		},
-
-		// selected filename changed, update nagivation
-		selectedFilename: function ( /* file */ ) {
-
-			if ( this.filename !== this.selectedFilename ) {
-
-				const params = { run: this.run };
-
-				const query = ( this.selectedFilename ) ? { filename: this.selectedFilename } : {};
-
-				this.$router.push( { name: 'srcdecl', params, query } );
-
-			}
-
-		},
-
-		revision: async function ( rev ) {
-
-			if ( rev && rev.length > 0 ) {
-
-				if ( ! this.content || Object.keys( this.content ).length === 0 ) {
-
-					this.content = { "Loading...": true };
-					this.content = await this._fetchFilesOfRevision( this.revision );
-
-				} else
-					console.log( 'content already loaded' );
-
-			} else {
-
-				this.content = '';
-
-			}
-
-		},
-
-	},
-
-	created() {
-
-		this.pullRunInfo();
-
-		this.selectedFilename = this.filename;
-
-	},
-
-	methods: {
-
-		// TODO: replace with vuex (store)
-		pullRunInfo() {
-
-			return fetch( `${API_URL}/runInfo/${this.run}` )
-				.then( res => res.json() )
-				.then( runInfo => {
-
-					this.runInfo = runInfo;
-
-					console.log( { runInfo } );
-
-					return true;
-
-				} )
-				.catch( err => console.error( 'runInfo request:', err ) );
-
-		},
-
-		_fetchFilesOfRevision( rev ) {
-
-			return fetch( `${API_URL}/sdd-viewer/showFile/${rev}` )
-				.then( res => res.json() )
-				.catch( err => console.error( '_fetchFilesOfRevision: %o', err ) );
-
-		}
-
-	}
 
 };
 </script>

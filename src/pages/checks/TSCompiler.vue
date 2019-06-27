@@ -7,11 +7,9 @@
     >
       <div class="col-4 h-100">
         <FilesList
-          v-if="revision && content"
+          v-if="content"
           :files="filesWithCounter"
-          :selected="selectedFilename"
           style="z-index: 0"
-          @selected="selectedFilename = $event"
         />
       </div>
       <div class="col h-100">
@@ -41,9 +39,7 @@
 import { DataTable } from 'v-datatable-light';
 const FilesList = () => import( /* webpackChunkName: "FilesList" */ '@/src/components/FilesList.vue' );
 
-// const API_URL = 'http://localhost:8855';
-const API_URL = '/api';
-
+import { mapGetters } from 'vuex';
 
 export default {
 
@@ -55,30 +51,15 @@ export default {
 	},
 
 	props: {
-		'filename': {
-			type: String,
-			default: ''
-		},
-		'run': {
-			type: Number,
-			default: 1,
-			required: true
-		}
 	},
 
 	data: function () {
 
 		return {
-			runInfo: {},
-
 			query: '',
 
 			sortField: 'line',
 			sortDir: 'asc',
-
-			content: '',
-
-			selectedFilename: '',
 
 			tableCss: {
 				table: 'table table-bordered table-hover table-striped table-center w-100',
@@ -105,25 +86,30 @@ export default {
 
 	computed: {
 
-		revision: function () {
+		...mapGetters( [
+			'currentFile',
+			'testData'
+		] ),
 
-			return this.runInfo.sha;
+		content: function () {
+
+			return this.testData( this.$route.params.run, this.$route.name ) || {};
 
 		},
 
 		tableData: function () {
 
-			console.log( this.content, this.filename );
-			if ( this.content && this.filename &&
+			console.log( this.content, this.currentFile );
+			if ( this.content && this.currentFile &&
 				( this.content.js && this.content.dts ) &&
 				( this.content.js.results || this.content.dts.results )
 			) {
 
 				let data = [];
-				if ( this.content.js.results[ this.filename ] )
-					data.push( ...this.content.js.results[ this.filename ].results );
-				if ( this.content.dts.results[ this.filename ] )
-					data.push( ...this.content.dts.results[ this.filename ].results );
+				if ( this.content.js.results[ this.currentFile ] )
+					data.push( ...this.content.js.results[ this.currentFile ].results );
+				if ( this.content.dts.results[ this.currentFile ] )
+					data.push( ...this.content.dts.results[ this.currentFile ].results );
 
 				console.log( { data } );
 				if ( this.sortField === 'message' ) {
@@ -186,91 +172,12 @@ export default {
 
 	},
 
-	watch: {
-
-		filename: function () {
-
-			this.selectedFilename = this.filename;
-
-		},
-
-		// selected filename changed, update nagivation
-		selectedFilename: function ( /* file */ ) {
-
-			if ( this.filename !== this.selectedFilename ) {
-
-				const params = { run: this.run };
-
-				const query = ( this.selectedFilename ) ? { filename: this.selectedFilename } : {};
-
-				this.$router.push( { name: 'checkWithTS', params, query } );
-
-			}
-
-		},
-
-		revision: async function ( rev ) {
-
-			if ( rev && rev.length > 0 ) {
-
-				if ( ! this.content || Object.keys( this.content ).length === 0 ) {
-
-					this.content = { "Loading...": true };
-					this.content = await this._fetchFilesOfRevision( this.revision );
-
-				} else
-					console.log( 'content already loaded' );
-
-			} else {
-
-				this.content = '';
-
-			}
-
-		}
-
-	},
-
-	created() {
-
-		this.pullRunInfo();
-
-		this.selectedFilename = this.filename;
-
-	},
-
 	methods: {
-
-		// TODO: replace with vuex (store)
-		pullRunInfo() {
-
-			return fetch( `${API_URL}/runInfo/${this.run}` )
-				.then( res => res.json() )
-				.then( runInfo => {
-
-					this.runInfo = runInfo;
-
-					console.log( { runInfo } );
-
-					return true;
-
-				} )
-				.catch( err => console.error( 'runInfo request:', err ) );
-
-		},
 
 		dtUpdateSort: function ( { sortField, sort } ) {
 
 			this.sortField = sortField;
 			this.sortDir = sort;
-
-		},
-
-		_fetchFilesOfRevision( rev ) {
-
-			return fetch( `${API_URL}/checkWithTS/showFile/${rev}` )
-				.then( res => res.json() )
-				.catch( err => console.error( '_fetchFilesOfRevision: %o', err ) );
 
 		}
 

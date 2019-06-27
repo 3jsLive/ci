@@ -32,7 +32,7 @@
 
             <DataTable
               :header-fields="tableHeaders"
-              :data="tableData"
+              :data="formattedData"
               :css="tableCss"
               :sort-field="sortField"
               :sort="sortDir"
@@ -59,9 +59,6 @@ import { DataTable } from 'v-datatable-light';
 const FilesList = () => import( /* webpackChunkName: "FilesList" */ '@/src/components/FilesList.vue' );
 
 import { mapGetters } from 'vuex';
-import store from '../../store';
-
-const API_URL = '/api';
 
 
 export default {
@@ -78,8 +75,6 @@ export default {
 		return {
 			sortField: 'line',
 			sortDir: 'asc',
-
-			content: '',
 
 			tableCss: {
 				table: 'table table-bordered table-hover table-striped table-center w-100',
@@ -98,6 +93,12 @@ export default {
 
 	computed: {
 
+		content: function () {
+
+			return this.testData( this.$route.params.run, this.$route.name ) || {};
+
+		},
+
 		tableHeaders: function () {
 
 			return [ {
@@ -107,6 +108,23 @@ export default {
 			}, {
 				name: 'source', label: 'Source tag', sortable: true
 			} ];
+
+		},
+
+		// necessary because the original data is incompatible with datatable
+		formattedData: function () {
+
+			const formatted = this.tableData.map( res => {
+
+				return {
+					tag: res.tag,
+					message: ( res.err ) ? res.err.message : res.message,
+					source: res.tag.source
+				};
+
+			} );
+
+			return formatted;
 
 		},
 
@@ -217,142 +235,11 @@ export default {
 		},
 
 		...mapGetters( [
-			'runInfo',
 			'currentFile',
-			'currentRunId',
 			'testData'
 		] )
 
 	},
-
-	mounted() {
-
-		// console.log( 'pulling because mounted' );
-
-		// this.$store.dispatch( 'pullTestData' );
-
-	},
-
-	// beforeRouteEnter( to, from, next ) {
-
-	// 	Promise.all( [
-	// 		store.dispatch( 'pullTestData' )
-	// 	] ).then( () => {
-
-	// 		console.log( 'after beforeRouteEnter', this.testData );
-
-	// 		next();
-
-	// 	} );
-
-	// },
-
-	async beforeRouteUpdate( to, from, next ) {
-
-		// Reset state if user goes from /editor/:id to /editor
-		// The component is not recreated so we use to hook to reset the state.
-
-		if ( to.params.run === from.params.run ) {
-
-			console.log( 'same runId' );
-
-		} else {
-
-			console.log( 'different runId' );
-
-			const newData = await store.dispatch( 'pullTestData', { runId: to.params.run } );
-			this.content = newData;
-
-		}
-
-		if ( to.query.filename && from.query.filename ) {
-
-			if ( to.query.filename === from.query.filename ) {
-
-				console.log( 'same file selected' );
-
-			} else {
-
-				console.log( 'different file selected' );
-
-			}
-
-		} else {
-
-			console.log( 'different files selected (or none at all)' );
-
-		}
-		// console.info( 'beforeRouteUpdate', to.params.run );
-		// await store.dispatch( 'pullTestData', { runId: to.params.run } );
-		// this.content = this.testData;
-		return next();
-
-	},
-	async beforeRouteEnter( to, from, next ) {
-
-		// SO: https://github.com/vuejs/vue-router/issues/1034
-		// If we arrive directly to this url, we need to fetch the article
-
-		return next( async vm => {
-
-			// from here on out, 'vm' is the instanced component (i.e. 'this' otherwise)
-
-			return await store.dispatch( 'pullRunData' )
-				.then( foo => {
-
-					console.log( { foo } );
-
-					return store.dispatch( 'pullTestData', { runId: to.params.run } );
-
-				} )
-				.then( bar => {
-
-					console.log( { bar } );
-					vm.content = bar; //vm.testData;
-
-					console.log( vm );
-					return bar;
-
-				} );
-
-		} );
-
-	},
-	async beforeRouteLeave( to, from, next ) {
-
-		console.info( 'beforeRouteLeave', to.params.run );
-		// await store.dispatch( 'pullTestData' );
-		// this.content = this.testData;
-		next();
-
-	},
-
-
-	// async created() {
-
-	// 	console.log( 'pulling because created' );
-
-	// 	const start = ( this.runInfo ) ? Promise.resolve( true ) : this.$store.dispatch( 'pullRunData' );
-
-	// 	return start
-	// 		.then( async () => {
-
-	// 			if ( this.testData )
-	// 				return Promise.resolve( true );
-	// 			else
-	// 				return await this.$store.dispatch( 'pullTestData' );
-
-	// 		} ).then( () => {
-
-	// 			this.content = this.testData;
-
-	// 			console.log( 'testData', this.testData );
-
-	// 			return Promise.resolve( true );
-
-	// 		} );
-
-	// },
 
 	methods: {
 
@@ -360,30 +247,6 @@ export default {
 
 			this.sortField = sortField;
 			this.sortDir = sort;
-
-		},
-
-		_fetchFilesOfRevision( rev ) {
-
-			return fetch( `${API_URL}/depsDocsDocs/showFile/${rev}` )
-				.then( res => res.json() )
-				.then( json => {
-
-					for ( const file of Object.keys( json.results ) ) {
-
-						for ( const result of json.results[ file ].results ) {
-
-							result.message = result.message || result.err.message;
-							result.source = result.tag.source;
-
-						}
-
-					}
-
-					return json;
-
-				} )
-				.catch( err => console.error( '_fetchFilesOfRevision: %o', err ) );
 
 		}
 

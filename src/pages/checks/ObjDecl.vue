@@ -5,20 +5,18 @@
       class="row d-flex align-items-stretch"
     >
       <FilesList
-        v-if="revision && content"
+        v-if="content"
         :files="filesWithCounter"
-        :selected="selectedFilename"
         style="z-index: 0"
-        @selected="selectedFilename = $event"
       />
 
       <div
-        v-if="content.results[ filename ]"
+        v-if="content.results[ currentFile ]"
         class="flex-fill h-100 ml-4 pl-0"
         style="width: 500px;overflow: scroll;max-width: 100%"
       >
         <WarningErrorMembers
-          :data="content.results[ filename ]"
+          :data="content.results[ currentFile ]"
           :shortname-to-table-caption="shortnameToTableCaption"
           title=""
         />
@@ -41,9 +39,7 @@
 import WarningErrorMembers from '@/src/components/WarningErrorMembers.vue';
 import FilesList from '@/src/components/FilesList.vue';
 
-// const API_URL = 'http://localhost:8855';
-const API_URL = '/api';
-
+import { mapGetters } from 'vuex';
 
 export default {
 
@@ -55,25 +51,11 @@ export default {
 	},
 
 	props: {
-		'filename': {
-			type: String,
-			default: ''
-		},
-		'run': {
-			type: Number,
-			default: 1,
-			required: true
-		}
 	},
 
 	data: function () {
 
 		return {
-			runInfo: {},
-
-			content: '',
-
-			selectedFilename: '',
 
 			shortnameToTableCaption: {
 				onlySource: 'Only on the object',
@@ -86,20 +68,25 @@ export default {
 
 	computed: {
 
-		revision: function () {
+		...mapGetters( [
+			'currentFile',
+			'testData'
+		] ),
 
-			return this.runInfo.sha;
+		content: function () {
+
+			return this.testData( this.$route.params.run, this.$route.name ) || {};
 
 		},
 
 		instanceProps: function () {
 
-			if ( ! this.content.results[ this.filename ] )
+			if ( ! this.content.results[ this.currentFile ].results )
 				return [];
 
-			return this.content.results[ this.filename ].results[ 0 ].onlySource.properties.map( prop => {
+			return this.content.results[ this.currentFile ].results[ 0 ].onlySource.properties.map( prop => {
 
-				return { name: this.content.results[ this.filename ].results[ 0 ][ 'class' ] + '.' + prop.name, legacy: prop.legacy };
+				return { name: this.content.results[ this.currentFile ].results[ 0 ][ 'class' ] + '.' + prop.name, legacy: prop.legacy };
 
 			} );
 
@@ -107,12 +94,12 @@ export default {
 
 		declProps: function () {
 
-			if ( ! this.content.results[ this.filename ] )
+			if ( ! this.content.results[ this.currentFile ] )
 				return [];
 
-			return this.content.results[ this.filename ].results[ 0 ].onlyDecl.properties.map( prop => {
+			return this.content.results[ this.currentFile ].results[ 0 ].onlyDecl.properties.map( prop => {
 
-				return { name: this.content.results[ this.filename ].results[ 0 ][ 'class' ] + '.' + prop.name, legacy: prop.legacy };
+				return { name: this.content.results[ this.currentFile ].results[ 0 ][ 'class' ] + '.' + prop.name, legacy: prop.legacy };
 
 			} );
 
@@ -135,6 +122,9 @@ export default {
 			return filesAll.reduce( ( all, file ) => {
 
 				let counter;
+
+				if ( this.content.results[ file ].results.length === 0 )
+					return all;
 
 				if ( ! this.content.results[ file ].results[ 0 ].onlySource || ! this.content.results[ file ].results[ 0 ].onlyDecl )
 					counter = 0;
@@ -160,108 +150,6 @@ export default {
 				return all;
 
 			}, {} );
-
-		}
-
-	},
-
-	watch: {
-
-		filename: function () {
-
-			this.selectedFilename = this.filename;
-
-		},
-
-		// selected filename changed, update nagivation
-		selectedFilename: function ( /* file */ ) {
-
-			if ( this.filename !== this.selectedFilename ) {
-
-				const params = { run: this.run };
-
-				const query = ( this.selectedFilename ) ? { filename: this.selectedFilename } : {};
-
-				this.$router.push( { name: 'objdecl', params, query } );
-
-			}
-
-		},
-
-		revision: async function ( rev ) {
-
-			if ( rev && rev.length > 0 ) {
-
-				if ( ! this.content || Object.keys( this.content ).length === 0 ) {
-
-					this.content = { "Loading...": true };
-
-					const raw = await this._fetchFilesOfRevision( this.revision );
-
-					this.content = Object.keys( raw.results ).reduce( ( all, file ) => {
-
-						const classes = raw.results[ file ].results.map( r => r.name ) || [ file ];
-
-						classes.forEach( ( klass, index ) => {
-
-							all.results[ `${file} : ${klass}` ] = {
-								errors: raw.results[ file ].errors,
-								results: [ { 'class': klass, ...raw.results[ file ].results[ index ] } ]
-							};
-
-						} );
-
-						return all;
-
-					}, { errors: [], results: {} } );
-
-
-				} else
-					console.log( 'content already loaded' );
-
-			} else {
-
-				this.content = '';
-
-			}
-
-		}
-
-	},
-
-	created() {
-
-		this.pullRunInfo();
-
-		this.selectedFilename = this.filename;
-
-	},
-
-	methods: {
-
-		// TODO: replace with vuex (store)
-		pullRunInfo() {
-
-			return fetch( `${API_URL}/runInfo/${this.run}` )
-				.then( res => res.json() )
-				.then( runInfo => {
-
-					this.runInfo = runInfo;
-
-					console.log( { runInfo } );
-
-					return true;
-
-				} )
-				.catch( err => console.error( 'runInfo request:', err ) );
-
-		},
-
-		_fetchFilesOfRevision( rev ) {
-
-			return fetch( `${API_URL}/odd-viewer/showFile/${rev}` )
-				.then( res => res.json() )
-				.catch( err => console.error( '_fetchFilesOfRevision: %o', err ) );
 
 		}
 

@@ -36,9 +36,7 @@
 
 import { DataTable } from 'v-datatable-light';
 
-// const API_URL = 'http://localhost:8855';
-const API_URL = '/api';
-
+import { mapGetters } from 'vuex';
 
 export default {
 
@@ -49,19 +47,11 @@ export default {
 	},
 
 	props: {
-		'run': {
-			type: Number,
-			default: 1,
-			required: true
-		}
 	},
 
 	data: function () {
 
 		return {
-			runInfo: {},
-
-			content1: '',
 
 			tableCss: {
 				table: 'table table-bordered table-hover table-striped table-center',
@@ -86,6 +76,15 @@ export default {
 	},
 
 	computed: {
+		...mapGetters( [
+			'testData'
+		] ),
+
+		content1: function () {
+
+			return this.testData( this.$route.params.run, this.$route.name ) || {};
+
+		},
 
 		tableData1: function () {
 
@@ -127,73 +126,6 @@ export default {
 				return [];
 
 			}
-
-		},
-
-		revision1: function () {
-
-			return this.runInfo.sha;
-
-		}
-
-	},
-	watch: {
-
-		revision1: async function ( rev ) {
-
-			this.selectedRev1 = this.revision1;
-
-			if ( rev && rev.length > 0 ) {
-
-				if ( ! this.content1 || Object.keys( this.content1 ).length === 0 ) {
-
-					this.content1 = { "Loading...": true };
-					this.content1 = await this._fetchFilesOfRevision( this.revision1 );
-
-				} else
-					console.log( 'content1 already loaded' );
-
-			} else {
-
-				this.content1 = '';
-
-			}
-
-		}
-
-	},
-
-	created() {
-
-		this.pullRunInfo();
-
-	},
-
-	methods: {
-
-		// TODO: replace with vuex (store)
-		pullRunInfo() {
-
-			return fetch( `${API_URL}/runInfo/${this.run}` )
-				.then( res => res.json() )
-				.then( runInfo => {
-
-					this.runInfo = runInfo;
-
-					console.log( { runInfo } );
-
-					return true;
-
-				} )
-				.catch( err => console.error( 'runInfo request:', err ) );
-
-		},
-
-		_fetchFilesOfRevision( rev ) {
-
-			return fetch( `${API_URL}/checks/DocsExamples/showFile/${rev}` )
-				.then( res => res.json() )
-				.catch( err => console.error( '_fetchFilesOfRevision: %o', err ) );
 
 		}
 
