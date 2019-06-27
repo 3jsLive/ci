@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="container-fluid d-flex flex-column">
     <div
@@ -36,7 +35,7 @@
                       <th>Revision</th>
                       <th>Timestamp</th>
                       <th>Reason</th>
-                      <th>Errors</th>
+                      <!-- <th>Errors</th> -->
                     </tr>
                     <tr
                       v-for="run in init"
@@ -51,7 +50,7 @@
                         <td>{{ run.sha }}</td>
                         <td>{{ run.timestamp | prettyDate }}</td>
                         <td>{{ run.reason }}</td>
-                        <td>{{ run.majorErrors }}</td>
+                        <!-- <td>{{ run.majorErrors }}</td> -->
                       </template>
                     </tr>
                   </tbody>
@@ -67,7 +66,6 @@
 
 <script>
 
-// const API_URL = 'http://localhost:8855';
 const API_URL = '/api';
 
 export default {
@@ -87,20 +85,9 @@ export default {
 	data: function () {
 
 		return {
-			init: false,
-			    dots: 'digraph "x"{\n  1->2\n  5->2;\n  1->3;\n  3->4;\n  4->1\n}'
-
+			init: false
 		};
 
-	},
-
-	  computed: {
-		// image: function () {
-
-		// 	var image = Viz( this.dots, { format: 'svg' } );
-		// 	return image;
-
-		// }
 	},
 
 	created() {
@@ -108,7 +95,6 @@ export default {
 		this.pullInit();
 
 	},
-
 
 	methods: {
 
@@ -119,21 +105,6 @@ export default {
 				.then( init => {
 
 					this.init = init;
-
-					/* const baselines = this.init.reduce( ( all, cur ) => {
-
-						all[ cur.baselineRunId || '"nope"' ] = all[ cur.baselineRunId || '"nope"' ] || [];
-						all[ cur.baselineRunId || '"nope"' ].push( cur.runId );
-
-						return all;
-
-					}, {} );
-
-					this.dots = `digraph "x" {
-						rankdir="TB";
-						${Object.entries( baselines ).map( ( [ baseline, runs ] ) => runs.map( run => `${run} -> ${baseline};` ).join( '' ) ).join( '\n' ) }
-						${this.init.map( ini => `${ini.runId} -> ${ini.parentRunId};` ).join( '\n' )}
-					}`; */
 
 					return true;
 
