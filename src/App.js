@@ -1,5 +1,3 @@
-console.log( 'start of App.js' );
-
 import Vue from 'vue';
 
 import 'jquery';
@@ -43,7 +41,7 @@ const checkWithTS = () => import( /* webpackChunkName: "checkWithTS" */ './pages
 const checkDocsExamples = () => import( /* webpackChunkName: "checkDocsExamples" */ './pages/checks/DocsExamples.vue' );
 const checkDocsExternals = () => import( /* webpackChunkName: "checkDocsExternals" */ './pages/checks/DocsExternals.vue' );
 const checkNonDocsExternals = () => import( /* webpackChunkName: "checkNonDocsExternals" */ './pages/checks/NonDocsExternals.vue' );
-const unittests = () => import( /* webpackChunkName: "unittests" */ './pages/checks/UnitTests.vue' );
+const checkUnitTests = () => import( /* webpackChunkName: "checkUnitTests" */ './pages/checks/UnitTests.vue' );
 
 // linters
 const linters = () => import( /* webpackChunkName: "linters" */ './linters.vue' );
@@ -85,7 +83,7 @@ const NavBar = () => import( /* webpackChunkName: "NavBar" */ './components/Navb
 
 const components = {
 	Run, Home,
-	docsdecl, srcdecl, objdecl, checkWithTS, checkDocsExamples, checkDocsExternals, checkNonDocsExternals, checkNpm, unittests,
+	docsdecl, srcdecl, objdecl, checkWithTS, checkDocsExamples, checkDocsExternals, checkNonDocsExternals, checkNpm, checkUnitTests,
 	linters,
 	linterDoobsDoc, linterHtml, linterCss, linterEslintCodeTags, linterEslintScriptTags, linterEslintJsFiles, linterEslintTsFiles,
 	NavBar/* , FilesList, HistoryList, NotableChanges, OverviewTable, ResultsTableRow, RunInfo */
@@ -104,7 +102,8 @@ const routes = [
 	{
 		path: '/runs',
 		components: { navbar: NavBar, default: Home },
-		name: 'home'
+		name: 'home',
+		meta: { skipAll: true }
 	},
 	{
 		path: '/runs/:run([0-9]+)',
@@ -113,7 +112,8 @@ const routes = [
 		props: {
 			navbar: propsRun,
 			default: propsRun
-		}
+		},
+		meta: { skip: true }
 	},
 	{
 		path: '/runs/:run([0-9]+)/linters',
@@ -122,7 +122,9 @@ const routes = [
 		props: {
 			navbar: propsRunFilename,
 			default: propsRunFilename
-		}
+		},
+		meta: { skip: true },
+
 	},
 	{
 		path: '/runs/:run([0-9]+)/linters/DoobsDoc',
@@ -251,8 +253,8 @@ const routes = [
 	},
 	{
 		path: '/runs/:run([0-9]+)/checks/UnitTests',
-		components: { navbar: NavBar, default: unittests },
-		name: 'unittests',
+		components: { navbar: NavBar, default: checkUnitTests },
+		name: 'checkUnitTests',
 		props: propsRun
 	},
 	{
@@ -275,7 +277,8 @@ const routes = [
 		path: '/linters.vue', //([a-f0-9A-F]+)
 		components: { navbar: NavBar, default: linters },
 		name: 'linters',
-		props: ( route ) => ( { revision1: route.params.firstRev } )
+		props: ( route ) => ( { revision1: route.params.firstRev } ),
+		meta: { skip: true }
 	},
 	{
 		path: '/checkNpm/:firstRev?/:secondRev?',
