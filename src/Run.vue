@@ -55,11 +55,7 @@
                 </h5>
                 <div class="card-body">
                   <p class="card-text">
-                    <overview-table
-                      :data="overview"
-                      :run="currentRunId"
-                      :history="history || []"
-                    />
+                    <overview-table />
                   </p>
                 </div>
               </div>
@@ -69,7 +65,7 @@
         <div class="col-4">
           <div class="col">
             <history-list
-              :history="history"
+              :history="backstory"
             />
           </div>
         </div>
@@ -150,39 +146,43 @@ export default {
 			return data.improvements.length > 0 || data.regressions.length > 0;
 
 		},
-		...mapGetters( [
-			'currentRunId',
-			'runInfo',
-			'overview',
-			'history'
-		] )
+
+		// ...mapGetters( {
+		// 	'getCurrentRunId': 'currentRunId',
+		// 	'getRunInfo': 'runInfo',
+		// 	'getOverview': 'overview',
+		// 	'getBackstory': 'backstory'
+		//  } )
+
+		runInfo: function () {
+
+			return this.$store.getters.runInfo( this.$route.params.run );
+
+		},
+
+		overview: function () {
+
+			return this.$store.getters.overview( this.$route.params.run );
+
+		},
+
+		backstory: function () {
+
+			return this.$store.getters.backstory( this.$route.params.run );
+
+		},
+
+		currentRunId: function () {
+
+			return this.$route.params.run;
+
+		}
 
 	},
 
 	created() {
 
 		this.shownRun = this.currentRunId;
-
-		// this.$store.commit( 'setCurrentRunId', this.shownRun );
-		// this.setCurrentRunId( this.shownRun );
-
-
-
-
-
-
-
-
-		// only navbar now
-		// this.$store.dispatch( 'pullRunData' );
-
-
-
-
-
-
-
-		// this.pullRunData();
 
 	},
 
@@ -250,66 +250,6 @@ export default {
 			}, { improvements: [], regressions: [] } );
 
 		},
-
-		/* pullRunInfo() {
-
-			return fetch( `${API_URL}/runInfo/${this.shownRun}` )
-				.then( res => res.json() )
-				.then( runInfo => {
-
-					console.log( { runInfo } );
-
-					return fetch( `${API_URL}/runInfo/${this.shownRun}/overview` )
-						.then( res => res.text() )
-						.then( overviewJson => {
-
-							runInfo.overviewJson = overviewJson;
-
-							this.runInfo = runInfo;
-
-							return runInfo;
-
-						} );
-
-				} )
-				.catch( err => console.error( 'runInfo request:', err ) );
-
-		}, */
-
-		/* pullRunHistory() {
-
-			return fetch( `${API_URL}/runInfo/${this.shownRun}/backstory` )
-				.then( res => res.json() )
-				.then( history => {
-
-					return fetch( `${API_URL}/runInfo/${this.shownRun}/overview?backstory` )
-						.then( res => res.json() )
-						.then( overviewHistories => {
-
-							console.log( { overviewHistories } );
-
-							this.history = history.map( ( { runId, sha } ) => {
-
-								const runResults = Object.keys( overviewHistories ).reduce( ( all, testname ) => {
-
-									all[ testname ] = { result: overviewHistories[ testname ][ runId ] };
-									return all;
-
-								}, {} );
-
-								return { name: runId, runId, sha, overviewJson: JSON.stringify( runResults ) };
-
-							} );
-
-							return overviewHistories;
-
-						} )
-						.catch( err => console.error( 'overview backstory request:', err ) );
-
-				} )
-				.catch( err => console.error( 'backstory request:', err ) );
-
-		} */
 
 	}
 
