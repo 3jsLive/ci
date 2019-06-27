@@ -275,25 +275,4 @@ table.table > tbody > tr > td:first-of-type { text-align: left; }
 table.table a.offline { text-decoration-line: line-through}
 
 
-.diff-neg-0 { background-color: #FFFFFF }
-.diff-neg-1 { background-color: #FFE0E0 }
-.diff-neg-2 { background-color: #FFD0D0 }
-.diff-neg-3 { background-color: #FFC0C0 }
-.diff-neg-4 { background-color: #FFB0B0 }
-.diff-neg-5 { background-color: #FFA0A0 }
-.diff-neg-6 { background-color: #FF9090 }
-.diff-neg-7 { background-color: #FF8080 }
-.diff-neg-8 { background-color: #FF7070 }
-.diff-neg-F { background-color: #FF0000 }
-.diff-pos-0 { background-color: #FFFFFF }
-.diff-pos-1 { background-color: #EEFFEE }
-.diff-pos-2 { background-color: #D0FFD0 }
-.diff-pos-3 { background-color: #C0FFC0 }
-.diff-pos-4 { background-color: #B0FFB0 }
-.diff-pos-5 { background-color: #A0FFA0 }
-.diff-pos-6 { background-color: #90FF90 }
-.diff-pos-7 { background-color: #80FF80 }
-.diff-pos-8 { background-color: #70FF70 }
-.diff-pos-F { background-color: #00FF00 }
-
 </style>

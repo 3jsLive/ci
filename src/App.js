@@ -343,7 +343,8 @@ Vue.prototype.$workerToDescription = {
 	dependencies: {
 		'DocsDocsDeps': 'Dependencies between doc pages',
 		'DocsSrcDeps': 'Dependencies between docs and source',
-		'SrcSrcDeps': 'Dependencies between source files'
+		'SrcSrcDeps': 'Dependencies between source files',
+		'RuntimeDeps': 'Dependencies of examples'
 	}
 };
 

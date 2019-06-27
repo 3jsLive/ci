@@ -1,11 +1,27 @@
 <template>
   <div>
-    <table class="table table-sm">
+    <table class="table table-sm overview">
       <tbody>
         <tr>
-          <th>Checks (# of hits)</th><th colspan="2">
+          <th class="group">
+            Checks (# of hits)
+          </th><th class="sparkline">
+			&nbsp;
+          </th><th
+            class="result"
+          >
             Result
-          </th><th>Parent</th><th>% Parent</th><th>Baseline</th><th>% Baseline</th><th>History</th>
+          </th><th class="parent">
+            Parent
+          </th><th class="parent-delta">
+            % Parent
+          </th><th class="baseline">
+            Baseline
+          </th><th class="baseline-delta">
+            % Baseline
+          </th><th class="history">
+            History
+          </th>
         </tr>
         <template v-for="( [ test, name ] ) of Object.entries( $workerToDescription.checks )">
           <results-table-row
@@ -31,12 +47,28 @@
         </template>
       </tbody>
     </table>
-    <table class="table table-sm">
+    <table class="table table-sm overview">
       <tbody>
         <tr>
-          <th>Linters (# of hits)</th><th colspan="2">
+          <th class="group">
+            Linters (# of hits)
+          </th><th class="sparkline">
+			&nbsp;
+          </th><th
+            class="result"
+          >
             Result
-          </th><th>Parent</th><th>% Parent</th><th>Baseline</th><th>% Baseline</th><th>History</th>
+          </th><th class="parent">
+            Parent
+          </th><th class="parent-delta">
+            % Parent
+          </th><th class="baseline">
+            Baseline
+          </th><th class="baseline-delta">
+            % Baseline
+          </th><th class="history">
+            History
+          </th>
         </tr>
         <template v-for="( [ test, name ] ) of Object.entries( $workerToDescription.linters )">
           <results-table-row
@@ -62,12 +94,28 @@
         </template>
       </tbody>
     </table>
-    <table class="table table-sm">
+    <table class="table table-sm overview">
       <tbody>
         <tr>
-          <th>Type Search (# of mismatches)</th><th colspan="2">
+          <th class="group">
+            Type Search (# of mismatches)
+          </th><th class="sparkline">
+			&nbsp;
+          </th><th
+            class="result"
+          >
             Result
-          </th><th>Parent</th><th>% Parent</th><th>Baseline</th><th>% Baseline</th><th>History</th>
+          </th><th class="parent">
+            Parent
+          </th><th class="parent-delta">
+            % Parent
+          </th><th class="baseline">
+            Baseline
+          </th><th class="baseline-delta">
+            % Baseline
+          </th><th class="history">
+            History
+          </th>
         </tr>
         <template v-for="( [ test, name ] ) of Object.entries( $workerToDescription.typesearch )">
           <results-table-row
@@ -81,12 +129,28 @@
         </template>
       </tbody>
     </table>
-    <table class="table table-sm">
+    <table class="table table-sm overview">
       <tbody>
         <tr>
-          <th>Profiling (# of suspicious runs)</th><th colspan="2">
+          <th class="group">
+            Profiling (# of suspicious runs)
+          </th><th class="sparkline">
+			&nbsp;
+          </th><th
+            class="result"
+          >
             Result
-          </th><th>Parent</th><th>% Parent</th><th>Baseline</th><th>% Baseline</th><th>History</th>
+          </th><th class="parent">
+            Parent
+          </th><th class="parent-delta">
+            % Parent
+          </th><th class="baseline">
+            Baseline
+          </th><th class="baseline-delta">
+            % Baseline
+          </th><th class="history">
+            History
+          </th>
         </tr>
         <template v-for="( [ test, name ] ) of Object.entries( $workerToDescription.profiling )">
           <results-table-row
@@ -100,12 +164,28 @@
         </template>
       </tbody>
     </table>
-    <table class="table table-sm">
+    <table class="table table-sm overview">
       <tbody>
         <tr>
-          <th>Dependencies (# of errors)</th><th colspan="2">
+          <th class="group">
+            Dependencies (# of errors)
+          </th><th class="sparkline">
+			&nbsp;
+          </th><th
+            class="result"
+          >
             Result
-          </th><th>Parent</th><th>% Parent</th><th>Baseline</th><th>% Baseline</th><th>History</th>
+          </th><th class="parent">
+            Parent
+          </th><th class="parent-delta">
+            % Parent
+          </th><th class="baseline">
+            Baseline
+          </th><th class="baseline-delta">
+            % Baseline
+          </th><th class="history">
+            History
+          </th>
         </tr>
         <template v-for="( [ test, name ] ) of Object.entries( $workerToDescription.dependencies )">
           <results-table-row
@@ -422,12 +502,22 @@ export default {
 <style scoped>
 
 table.table > tbody > tr:first-of-type > th { border-top: 0px; }
-table.table > tbody > tr:first-of-type > th:first-of-type { width: 50%; }
+/* table.table > tbody > tr:first-of-type > th:first-of-type { width: 50%; } */
 
 table.table > tbody > tr { text-align: right; }
 table.table > tbody > tr > th:first-of-type { text-align: left; }
 table.table > tbody > tr > td:first-of-type { text-align: left; }
 
 table.table a { text-decoration-line: line-through}
+
+/* .overview */
+.overview .group { min-width: 65ch }
+.overview .sparkline { width: 120px }
+.overview .result { width: 6ch }
+.overview .parent { width: 6ch }
+.overview .parent-delta { width: 9ch }
+.overview .baseline { width: 7ch }
+.overview .baseline-delta { width: 11ch }
+.overview .history { width: 13ch }
 
 </style>
