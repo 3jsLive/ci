@@ -1,15 +1,16 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import router from '../App.js';
 
 Vue.use( Vuex );
+
+const stateProperties = [ 'runInfo', 'overview', 'tests', 'quickInfo', 'sparkline', 'backstory' ];
 
 export default new Vuex.Store( {
 	// TODO: switch to non-objects, we shouldn't cache multiple runs (should we?)
 	state: {
 		runInfo: {},
-		history: {},
 		overview: {},
+		backstory: {},
 		gitData: {},
 		tests: {},
 		quickInfo: {},
@@ -18,7 +19,7 @@ export default new Vuex.Store( {
 	},
 	mutations: {
 
-		...[ 'runInfo', 'overview', 'history', 'tests', 'quickInfo', 'sparkline' ].map( name => name + 'Store' ).reduce( ( all, name ) => {
+		...stateProperties.map( name => name + 'Store' ).reduce( ( all, name ) => {
 
 			all[ name ] = ( state, payload ) => genericStore( state, payload );
 			return all;
@@ -29,19 +30,27 @@ export default new Vuex.Store( {
 
 			genericStoreTestData( state, payload );
 
-		}
+		}/* ,
+
+		'runInfoStore'( state, payload ) {
+
+			genericStoreRunInfo( state, payload );
+
+		} */
 
 	},
 	getters: {
 
-		runInfo: ( state, getters ) => genericGet( state, getters, 'runInfo' ),
-		overview: ( state, getters ) => genericGet( state, getters, 'overview' ),
-		history: ( state, getters ) => genericGet( state, getters, 'history' ),
-		tests: ( state, getters ) => genericGet( state, getters, 'tests' ),
-		quickInfo: ( state, getters ) => genericGet( state, getters, 'quickInfo' ),
-		sparkline: ( state, getters ) => genericGet( state, getters, 'sparkline' ),
+		// runInfo: ( state/* , getters */ ) => ( runId ) => getRunInfo( state, runId ),
+		runInfo: ( state, getters ) => ( runId ) => genericGet( state, getters, 'runInfo', runId ),
+		overview: ( state, getters ) => ( runId ) => genericGet( state, getters, 'overview', runId ),
+		history: ( state, getters ) => ( runId ) => genericGet( state, getters, 'history', runId ),
+		tests: ( state, getters ) => ( runId ) => genericGet( state, getters, 'tests', runId ),
+		quickInfo: ( state, getters ) => ( runId ) => genericGet( state, getters, 'quickInfo', runId ),
+		sparkline: ( state, getters ) => ( runId ) => genericGet( state, getters, 'sparkline', runId ),
+		backstory: ( state, getters ) => ( runId ) => genericGet( state, getters, 'backstory', runId ),
 
-		testData: ( state, getters ) => genericGetTestData( state, getters ),
+		testData: ( state, getters ) => ( runId, test ) => genericGetTestData( state, getters, runId, test ),
 
 		currentRunId: state => state.route.params.run,
 		currentFile: state => state.route.query.filename || '',
@@ -50,34 +59,35 @@ export default new Vuex.Store( {
 	},
 	actions: {
 
-		pullRunData( { getters, dispatch }, payload ) {
+		pullRunData( { getters, dispatch, state }, { runId: forcedRunId } ) {
 
-			const runId = ( payload && payload.runId ) ? payload.runId : false;
-			console.log( ( runId ) ? 'runId override working: ' + runId : 'no runId supplied' );
+			// do we have a custom runId instead of currentRunId?
+			const runId = forcedRunId || getters.currentRunId;
 
-			let promises = [];
+			console.log( 'pullRunData with', runId );
 
-			if ( ! getters.runInfo )
-				promises.push( dispatch( 'genericPullAction', { target: 'runInfo', runId: runId || false } ) );
+			// push all actions into an array
+			const promises = stateProperties.reduce( ( all, target ) => {
 
-			if ( ! getters.overview )
-				promises.push( dispatch( 'genericPullAction', { target: 'overview', runId: runId || false } ) );
+				if ( typeof state[ target ][ runId ] === 'undefined' ) {
 
-			if ( ! getters.history )
-				promises.push( dispatch( 'genericPullAction', { target: 'history', runId: runId || false } ) );
+					console.log( 'dispatch genericPullAction', target, runId );
+					all.push( dispatch( 'genericPullAction', { target, runId } ) );
 
-			if ( ! getters.tests )
-				promises.push( dispatch( 'genericPullAction', { target: 'tests', runId: runId || false } ) );
+				} else {
 
-			if ( ! getters.quickInfo )
-				promises.push( dispatch( 'genericPullAction', { target: 'quickInfo', runId: runId || false } ) );
+					console.log( target, runId, 'already exists', state[ target ][ runId ] );
 
-			if ( ! getters.sparkline )
-				promises.push( dispatch( 'genericPullAction', { target: 'sparkline', runId: runId || false } ) );
+				}
+
+				return all;
+
+			}, [] );
 
 			return Promise.all( promises );
 
 		},
+
 
 		// TODO: same as above, create a FactoryFunction and not a generic one so we can have named helpers?
 		async genericPullAction( { commit, state, getters }, { target, runId: forcedRunId } ) {
@@ -93,71 +103,73 @@ export default new Vuex.Store( {
 
 		},
 
-		async pullTestData( { getters, dispatch }, { runId: forcedRunId } ) {
 
-			if ( ! getters.testData ) {
+		async pullRunInfo( { state, getters, dispatch }, { runId: forcedRunId } ) {
 
-				const runId = forcedRunId || getters.currentRunId;
-				console.log( ( forcedRunId ) ? 'runId override activated: ' + forcedRunId : 'no override activated' );
-				return await dispatch( 'genericShowFileAction', { runId } );
+			const runId = forcedRunId || getters.currentRunId;
+			console.log( 'pullRunInfo with', runId );
+
+			if ( typeof state.runInfo[ runId ] === 'undefined' ) {
+
+				return await dispatch( 'genericPullAction', { target: 'runInfo', runId } );
 
 			} else {
 
-				return getters.testData;
+				return state.runInfo[ runId ];
 
 			}
 
 		},
 
-		async genericShowFileAction( { commit, state, getters }, { runId: forcedRunId } ) {
 
-			console.log( '------------------------------------------', getters.runInfo.sha );
+		async pullTestData( { state, getters, dispatch }, { runId: forcedRunId, currentTest: forcedTest } ) {
 
 			const runId = forcedRunId || getters.currentRunId;
+			const currentTest = forcedTest || getters.currentTest;
 
-			console.log( ( forcedRunId ) ? 'runId override functionado: ' + forcedRunId : 'no sé :(' );
+			console.log( 'pullTestData with', runId, currentTest );
+
+			if ( ! state.testData[ currentTest ] || ! state.testData[ currentTest ][ runId ] ) {
+
+				return await dispatch( 'genericShowFileAction', { runId, currentTest } );
+
+			} else {
+
+				return state.testData[ currentTest ][ runId ];
+
+			}
+
+		},
+
+
+		async genericShowFileAction( { commit, state, getters }, { runId: forcedRunId, currentTest: forcedTest } ) {
+
+			const runId = forcedRunId || getters.currentRunId;
+			const currentTest = forcedTest || getters.currentTest;
+
+			console.log( 'genericShowFileAction with', runId, currentTest );
 
 			if ( ! state )
-				console.error( 'genericShowFileAction', getters.currentTest, 'no state' );
+				console.error( 'genericShowFileAction', currentTest, 'no state' );
 			else {
 
-				console.log( 'committing...', getters.currentTest, getters.runInfo.sha, 'from', JSON.stringify( state ) );
+				console.log( 'committing...', currentTest, getters.runInfo( runId ).sha, 'from', JSON.stringify( state ) );
 
-				const data = await genericShowFile( getters.currentTest, getters.runInfo.sha );
+				const data = await genericShowFile( currentTest, getters.runInfo( runId ).sha );
 
 				commit( 'testDataStore', {
 					runId: runId,
-					target: getters.currentTest,
-					[ getters.currentTest ]: data
+					target: currentTest,
+					[ currentTest ]: data
 				} );
 
 				return data;
 
 			}
 
-		},
-
-		// actions to update route asynchronously
-		// TODO: do we actually need these?
-		routerPush( _, arg ) {
-
-			router.push( arg );
-
-		},
-
-		routerGo( _, arg ) {
-
-			router.go( arg );
-
 		}
 
-	},
-	modules: {
-		// cart,
-		// products
-	},
-	// strict: debug,
-//   plugins: debug ? [createLogger()] : []
+	}
 } );
 
 
@@ -166,8 +178,6 @@ function genericPull( runId, target ) {
 	let url;
 	if ( target === 'runInfo' )
 		url = `/api/runInfo/${runId}`;
-	else if ( target === 'history' )
-		return GoPullHistory( runId );
 	else
 		url = `/api/runInfo/${runId}/${target}`;
 
@@ -193,7 +203,7 @@ async function genericShowFile( test, sha ) {
 		.then( res => res.json() )
 		.then( data => {
 
-			console.log( 'async genericShowFile', test, sha );
+			// console.log( 'async genericShowFile', test, sha );
 
 			return data;
 
@@ -203,7 +213,11 @@ async function genericShowFile( test, sha ) {
 }
 
 
-function genericGet( state, getters, target ) {
+function genericGet( state, getters, target, forcedRunId ) {
+
+	const runId = forcedRunId || getters.currentRunId;
+
+	console.log( 'genericGet', target, runId );
 
 	if ( ! state ) {
 
@@ -211,13 +225,14 @@ function genericGet( state, getters, target ) {
 
 	} else {
 
-		if ( typeof state[ target ] !== 'undefined' && typeof state[ target ][ getters.currentRunId ] !== 'undefined' ) {
+		if ( typeof state[ target ] !== 'undefined' && typeof state[ target ][ runId ] !== 'undefined' ) {
 
-			return state[ target ][ getters.currentRunId ];
+			console.log( target, 'cached' );
+			return state[ target ][ runId ];
 
 		} else
 		// console.error( 'genericGet', target, getters.currentRunId, 'not found', JSON.stringify( state[ target ] ) );
-			console.warn( 'genericGet', target, getters.currentRunId, 'not found', JSON.stringify( state[ target ] ) );
+			console.warn( 'genericGet', target, runId, 'not found', JSON.stringify( state[ target ] ) );
 
 	}
 
@@ -226,37 +241,60 @@ function genericGet( state, getters, target ) {
 }
 
 
-function genericGetTestData( state, getters ) {
+/* function getRunInfo( state, runId ) {
+
+	console.log( 'getRunInfo', runId );
 
 	if ( ! state ) {
 
-		console.error( 'genericGetTestData', getters.currentTest, 'no state' );
+		console.error( 'getRunInfo', runId, 'no state' );
 
 	} else {
 
-		if ( typeof state[ 'testData' ][ getters.currentTest ] !== 'undefined' ) {
+		if ( typeof state.runInfo !== 'undefined' && typeof state.runInfo[ runId ] !== 'undefined' ) {
 
-			if ( typeof state[ 'testData' ][ getters.currentTest ][ getters.currentRunId ] !== 'undefined' ) {
+			console.log( runId, 'cached' );
+			return state.runInfo[ runId ];
 
-				console.log( 'genericGetTestData return', state[ 'testData' ][ getters.currentTest ][ getters.currentRunId ] );
+		} else
+			console.warn( 'getRunInfo', runId, 'not found', JSON.stringify( state.runInfo ) );
 
-				return state[ 'testData' ][ getters.currentTest ][ getters.currentRunId ];
+	}
+
+	return false;
+
+} */
+
+
+function genericGetTestData( state, getters, runId, currentTest ) {
+
+	if ( ! state ) {
+
+		console.error( 'genericGetTestData', currentTest, 'no state' );
+
+	} else {
+
+		if ( typeof state[ 'testData' ][ currentTest ] !== 'undefined' ) {
+
+			if ( typeof state[ 'testData' ][ currentTest ][ runId ] !== 'undefined' ) {
+
+				console.log( 'genericGetTestData return', state[ 'testData' ][ currentTest ][ runId ] );
+
+				return state[ 'testData' ][ currentTest ][ runId ];
 
 			} else {
 
-				console.log( 'test known, but no data loaded', getters.currentTest, getters.currentRunId );
+				console.log( 'test known, but no data loaded', currentTest, runId );
 
 			}
 
 		} else {
 
-			console.warn( 'genericGetTestData', getters.currentTest, getters.currentRunId, 'not found', JSON.stringify( state[ 'testData' ] ) );
+			console.warn( 'genericGetTestData', currentTest, runId, 'not found', JSON.stringify( state[ 'testData' ] ) );
 
 		}
 
 	}
-
-	console.log( '>>>', getters.currentTest, getters.currentRunId );
 
 	return false;
 
@@ -275,7 +313,7 @@ function genericStore( state, payload ) {
 
 	} else {
 
-		console.log( 'genericStore', { payload: JSON.stringify( payload ), raw: payload } );
+		// console.log( 'genericStore', { payload: JSON.stringify( payload ), raw: payload } );
 		Vue.set( state[ payload.target ], payload.runId, payload[ payload.target ] );
 
 	}
@@ -295,7 +333,7 @@ function genericStoreTestData( state, payload ) {
 
 	} else {
 
-		console.log( 'genericStoreTestData', { payload: JSON.stringify( payload ), raw: payload } );
+		// console.log( 'genericStoreTestData', { payload: JSON.stringify( payload ), raw: payload } );
 		state[ 'testData' ][ payload.target ] = {};
 		Vue.set( state[ 'testData' ][ payload.target ], payload.runId, payload[ payload.target ] );
 
@@ -303,34 +341,20 @@ function genericStoreTestData( state, payload ) {
 
 }
 
+/* function genericStoreRunInfo( state, payload ) {
 
-function GoPullHistory( runId ) {
+	if ( ! state ) {
 
-	return fetch( `/api/runInfo/${runId}/backstory` )
-		.then( res => res.json() )
-		.then( backstory => {
+		console.error( 'genericStoreRunInfo', payload.runId, 'no state' );
 
-			return fetch( `/api/runInfo/${runId}/overview?backstory` )
-				.then( res => res.json() )
-				.then( overviewHistories => {
+	} else if ( ! payload || ! payload.runId || ! payload.data ) {
 
-					return backstory.map( ( { runId, sha } ) => {
+		console.error( 'genericStoreRunInfo: no payload or invalid payload', payload );
 
-						const runResults = Object.keys( overviewHistories ).reduce( ( all, testname ) => {
+	} else {
 
-							all[ testname ] = { result: overviewHistories[ testname ][ runId ] };
-							return all;
+		Vue.set( state.runInfo, payload.runId, payload.data );
 
-						}, {} );
+	}
 
-						return { name: runId, runId, sha, overviewJson: JSON.stringify( runResults ) };
-
-					} );
-
-				} )
-				.catch( err => console.error( 'runInfo/overview?backstory request:', err ) );
-
-		} )
-		.catch( err => console.error( 'runInfo/backstory request:', err ) );
-
-}
+} */
