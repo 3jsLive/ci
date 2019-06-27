@@ -62,7 +62,7 @@ data.test	current test
     </td>
     <td>
       <highcharts
-        v-if="showHistory"
+        v-if="showHistory && showSparklines"
         :ref="`chart-${data.test}`"
         :callback="chartLoaded"
         class="chart"
@@ -287,6 +287,12 @@ export default {
 					||
 					( this.data.baselineDelta && this.data.baselineDelta !== 0 ) // or between baseline and current run
 				);
+
+		},
+
+		showSparklines: function () {
+
+			return this.data.result !== '-' || this.data.parent !== '-' || this.data.baseline !== '-';
 
 		}
 

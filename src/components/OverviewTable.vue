@@ -156,12 +156,23 @@ export default {
 
 	computed: {
 
-		...mapGetters( [
-			'currentRunId',
-			'overview',
-			'history',
-			'sparkline'
-		] )
+		overview: function () {
+
+			return this.$store.getters.overview( this.$route.params.run );
+
+		},
+
+		sparkline: function () {
+
+			return this.$store.getters.sparkline( this.$route.params.run );
+
+		},
+
+		currentRunId: function () {
+
+			return this.$route.params.run;
+
+		}
 
 	},
 
