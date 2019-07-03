@@ -42,6 +42,8 @@ const checkDocsExamples = () => import( /* webpackChunkName: "checkDocsExamples"
 const checkDocsExternals = () => import( /* webpackChunkName: "checkDocsExternals" */ './pages/checks/DocsExternals.vue' );
 const checkNonDocsExternals = () => import( /* webpackChunkName: "checkNonDocsExternals" */ './pages/checks/NonDocsExternals.vue' );
 const checkUnitTests = () => import( /* webpackChunkName: "checkUnitTests" */ './pages/checks/UnitTests.vue' );
+const compareSourceExports = () => import( /* webpackChunkName: "compareSourceExports" */ './pages/checks/CompSrcExp.vue' );
+const compareExamplesExports = () => import( /* webpackChunkName: "compareExamplesExports" */ './pages/checks/CompExmplsExp.vue' );
 
 // linters
 const linters = () => import( /* webpackChunkName: "linters" */ './linters.vue' );
@@ -83,7 +85,7 @@ const NavBar = () => import( /* webpackChunkName: "NavBar" */ './components/Navb
 
 const components = {
 	Run, Home,
-	docsdecl, srcdecl, objdecl, checkWithTS, checkDocsExamples, checkDocsExternals, checkNonDocsExternals, checkNpm, checkUnitTests,
+	docsdecl, srcdecl, objdecl, checkWithTS, checkDocsExamples, checkDocsExternals, checkNonDocsExternals, checkNpm, checkUnitTests, compareSourceExports, compareExamplesExports,
 	linters,
 	linterDoobsDoc, linterHtml, linterCss, linterEslintCodeTags, linterEslintScriptTags, linterEslintJsFiles, linterEslintTsFiles,
 	NavBar/* , FilesList, HistoryList, NotableChanges, OverviewTable, ResultsTableRow, RunInfo */
@@ -258,6 +260,24 @@ const routes = [
 		props: propsRun
 	},
 	{
+		path: '/runs/:run([0-9]+)/checks/CompSrcExp',
+		components: { navbar: NavBar, default: compareSourceExports },
+		name: 'compareSourceExports',
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
+	},
+	{
+		path: '/runs/:run([0-9]+)/checks/CompExmplsExp',
+		components: { navbar: NavBar, default: compareExamplesExports },
+		name: 'compareExamplesExports',
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
+	},
+	{
 		path: '/runs/:run([0-9]+)/dependencies/DocsDocsDeps',
 		components: { navbar: NavBar, default: depsDocsDocs },
 		name: 'depsDocsDocs',
@@ -314,7 +334,9 @@ Vue.prototype.$workerToDescription = {
 		'DocsExternals': 'Scan Docs for broken external links',
 		'NonDocsExternals': 'Scan Non-Docs for broken external links',
 		'UnitTests': 'Unit tests (browser)',
-		'ScanCompletion': 'Check for orphaned pages'
+		'ScanCompletion': 'Check for orphaned pages',
+		'CompSrcExp': 'Compare exported symbols (Source)',
+		'CompExmplsExp': 'Compare exported symbols (Examples)'
 	},
 	notifiers: {
 		'CheckNPM': 'Check NPM for outdated dependencies',
