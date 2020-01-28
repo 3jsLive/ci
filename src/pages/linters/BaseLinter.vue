@@ -1,46 +1,40 @@
 <template>
-  <div class="container-fluid h-100 overflow-hidden">
+  <div
+    id="content"
+    class="d-flex flex-fill"
+  >
+    <FilesList
+      v-if="content"
+      :files="filesWithCounter"
+      :selected="currentFile"
+      style="z-index: 0"
+    />
     <div
-      id="content"
-      class="row h-100"
+      class="flex-fill d-flex flex-column align-items-center overflow-auto ml-1 mr-3"
     >
-      <div class="col-4 h-100">
-        <FilesList
-          v-if="content"
-          :files="filesWithCounter"
-          :selected="currentFile"
-          style="z-index: 0"
-        />
+      <div
+        v-if="showError !== false"
+        class="alert alert-danger text-center"
+        role="alert"
+      >
+        <strong>Error</strong><br>{{ showError }}
       </div>
-      <div class="col h-100">
-        <div
-          class="flex-fill d-flex flex-column align-items-center h-100 ml-1 mr-3"
-        >
-          <div
-            v-if="showError !== false"
-            class="alert alert-danger text-center"
-            role="alert"
-          >
-            <strong>Error</strong><br>{{ showError }}
-          </div>
-          <template
-            v-if="tableData && showError === false"
-          >
-            <h4 class="text-center">
-              Results
-            </h4>
+      <template
+        v-if="tableData && showError === false"
+      >
+        <h4 class="text-center">
+          Results
+        </h4>
 
-            <DataTable
-              :header-fields="tableHeaders"
-              :data="tableData"
-              :css="tableCss"
-              :sort-field="sortField"
-              :sort="sortDir"
-              @onUpdate="dtUpdateSort"
-            />
-          </template>
-        </div>
-      </div>
+        <DataTable
+          :header-fields="tableHeaders"
+          :data="tableData"
+          :css="tableCss"
+          :sort-field="sortField"
+          :sort="sortDir"
+          @onUpdate="dtUpdateSort"
+        />
+      </template>
     </div>
   </div>
 </template>
@@ -211,8 +205,12 @@ export default {
 };
 </script>
 
-<style>
-
+<style scoped>
+#content { height: 100%; overflow: hidden }
+#content.row {
+    height: 100%;
+	overflow: auto;
+}
 .v-datatable-light .header-item {
   cursor: pointer;
   color: #337ab7;
