@@ -1,26 +1,24 @@
 <template>
-  <div class="container-fluid d-flex flex-column h-100">
-    <div
-      id="content"
-      class="row d-flex align-items-stretch"
-    >
-      <FilesList
-        v-if="content"
-        :files="filesWithCounter"
-        style="z-index: 0"
-      />
+  <div
+    id="content"
+    class="d-flex flex-fill"
+  >
+    <FilesList
+      v-if="content"
+      :files="filesWithCounter"
+      style="z-index: 0"
+    />
 
-      <div
-        v-if="content.results[ currentFile ]"
-        class="flex-fill h-100 ml-4 pl-0"
-        style="width: 500px;overflow: scroll;max-width: 100%"
-      >
+    <div
+      v-if="content.results[ currentFile ]"
+      class="flex-fill d-flex"
+    >
+      <div class="d-flex flex-column flex-fill">
         <WarningErrorMembers
           :data="content.results[ currentFile ]"
           :shortname-to-table-caption="shortnameToTableCaption"
           title=""
         />
-
         <div
           v-if="showLegacy"
           class="row"
