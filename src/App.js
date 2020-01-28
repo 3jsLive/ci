@@ -1,11 +1,19 @@
 import Vue from 'vue';
 
+
+// TODO: drop them once we've imported bootstrap.native
 import 'jquery';
 import 'popper.js';
 
+
+// TODO: replace bootstrap with bootstrap.native
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+// import '../public/bootstrap-slate.min.css';
 // import 'bootstrap.native/dist/bootstrap-native-v4';
+// import BootstrapNative from 'bootstrap.native/dist/bootstrap-native-v4';
+// Vue.prototype.$BSN = BootstrapNative;
+
 
 // import App from './App.vue';
 const App = () => import( /* webpackChunkName: "App" */ './App.vue' );
@@ -13,24 +21,20 @@ const App = () => import( /* webpackChunkName: "App" */ './App.vue' );
 
 import VueRouter from 'vue-router';
 import store from './store';
-
 import { sync } from 'vuex-router-sync';
 
 
+// TODO: decide whether to go back to FA?
+// import { library } from '@fortawesome/fontawesome-svg-core';
+// import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
+// import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+// library.add( faExclamationCircle );
+// Vue.component( 'font-awesome-icon', FontAwesomeIcon );
 
 
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-
-library.add( faExclamationCircle );
-
-Vue.component( 'font-awesome-icon', FontAwesomeIcon );
-
-
-
-
-
+import VueVirtualScroller from 'vue-virtual-scroller';
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
+Vue.use( VueVirtualScroller );
 
 
 // checks
@@ -44,6 +48,8 @@ const checkNonDocsExternals = () => import( /* webpackChunkName: "checkNonDocsEx
 const checkUnitTests = () => import( /* webpackChunkName: "checkUnitTests" */ './pages/checks/UnitTests.vue' );
 const compareSourceExports = () => import( /* webpackChunkName: "compareSourceExports" */ './pages/checks/CompSrcExp.vue' );
 const compareExamplesExports = () => import( /* webpackChunkName: "compareExamplesExports" */ './pages/checks/CompExmplsExp.vue' );
+
+const FilesAndResults = () => import( /* webpackChunkName: "FilesAndResults" */ './pages/FilesAndResults.vue' );
 
 // linters
 const linters = () => import( /* webpackChunkName: "linters" */ './linters.vue' );
@@ -60,6 +66,12 @@ const checkNpm = () => import( /* webpackChunkName: "checkNpm" */ './pages/notif
 
 // dependencies
 const depsDocsDocs = () => import( /* webpackChunkName: "depsDocsDocs" */ './pages/dependencies/DocsDocsDeps.vue' );
+
+// profiling
+const profilingStats = () => import( /* webpackChunkName: "profilingStats" */ './pages/profiling/Stats.vue' );
+
+// type search
+const typesearchSearch = () => import( /* webpackChunkName: "typesearchSearch" */ './pages/typesearch/Search.vue' );
 
 // general
 // const run = resolve => require( [ '@/src/Run.vue' ], resolve );
@@ -88,6 +100,7 @@ const components = {
 	docsdecl, srcdecl, objdecl, checkWithTS, checkDocsExamples, checkDocsExternals, checkNonDocsExternals, checkNpm, checkUnitTests, compareSourceExports, compareExamplesExports,
 	linters,
 	linterDoobsDoc, linterHtml, linterCss, linterEslintCodeTags, linterEslintScriptTags, linterEslintJsFiles, linterEslintTsFiles,
+	profilingStats, typesearchSearch,
 	NavBar/* , FilesList, HistoryList, NotableChanges, OverviewTable, ResultsTableRow, RunInfo */
 };
 
@@ -286,6 +299,26 @@ const routes = [
 			default: propsRunFilename
 		}
 	},
+	{
+		// debug
+		path: '/runs/:run([0-9]+)/profiling/Stats',
+		components: { navbar: NavBar, default: profilingStats },
+		name: 'profilingStats',
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
+	},
+	{
+		// debug
+		path: '/runs/:run([0-9]+)/typesearch/Search',
+		components: { navbar: NavBar, default: typesearchSearch },
+		name: 'typesearchSearch',
+		props: {
+			navbar: propsRunFilename,
+			default: propsRunFilename
+		}
+	},
 	// {
 	// 	path: '/runs/:run([0-9]+)/list/:test',
 	// 	components: { navbar: NavBar, default: list},
@@ -297,6 +330,14 @@ const routes = [
 		path: '/linters.vue', //([a-f0-9A-F]+)
 		components: { navbar: NavBar, default: linters },
 		name: 'linters',
+		props: ( route ) => ( { revision1: route.params.firstRev } ),
+		meta: { skip: true }
+	},
+	{
+		// test route
+		path: '/FilesAndResults.vue', //([a-f0-9A-F]+)
+		components: { navbar: NavBar, default: FilesAndResults },
+		name: 'FilesAndResults',
 		props: ( route ) => ( { revision1: route.params.firstRev } ),
 		meta: { skip: true }
 	},
@@ -315,6 +356,7 @@ const router = new VueRouter( {
 	linkActiveClass: 'active',
 	routes
 } );
+
 
 /* const unsync =  */sync( store, router );
 
@@ -374,11 +416,27 @@ Vue.prototype.$workerToDescription[ '_all' ] = Object.values( Vue.prototype.$wor
 	.reduce( ( all, workers ) => ( { ...all, ...workers } ), {} );
 
 
+// TODO: do we really want to use highcarts? (size!)
 import hc from "highcharts/highcharts";
 import HighchartsVue from "highcharts-vue";
-import boost from "highcharts/modules/boost";
 
+import boost from "highcharts/modules/boost";
 boost( hc );
+
+import histogram from "highcharts/modules/histogram-bellcurve";
+histogram( hc );
+
+import sankey from "highcharts/modules/sankey";
+sankey( hc );
+
+import dependencyWheel from "highcharts/modules/dependency-wheel";
+dependencyWheel( hc );
+
+import heatmap from "highcharts/modules/heatmap";
+heatmap( hc );
+
+import treemap from "highcharts/modules/treemap";
+treemap( hc );
 
 Vue.use( HighchartsVue );
 
@@ -388,5 +446,13 @@ const app = new Vue( {
 	router,
 	store
 } ).$mount( '#app' );
+
+// needs to run after navbar init
+var myDropdowns = document.querySelectorAll( '.dropdown-toggle' );
+Array.from( myDropdowns ).forEach( link => {
+
+	new Vue.prototype.$BSN.Dropdown( link, true );
+
+} );
 
 console.log( { app } );

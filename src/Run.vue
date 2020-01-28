@@ -62,11 +62,9 @@
           </div>
         </div>
         <div class="col-4">
-          <div class="col">
-            <history-list
-              :history="backstory"
-            />
-          </div>
+          <history-list
+            :history="backstory"
+          />
         </div>
       </div>
     </div>
@@ -195,11 +193,6 @@ export default {
 </script>
 
 <style scoped>
-#content { height: 100%; overflow: hidden }
-#content.row {
-    height: 100%;
-	overflow: auto;
-}
 
 table.table > tbody > tr:first-of-type > th { border-top: 0px; }
 table.table > tbody > tr:first-of-type > th:first-of-type { width: 50%; }

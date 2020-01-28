@@ -5,6 +5,10 @@ Vue.use( Vuex );
 
 const stateProperties = [ 'runInfo', 'overview', 'tests', 'quickInfo', 'sparkline', 'backstory' ];
 
+// const API_URL = 'http://127.0.0.1:8080/api/ci';
+const API_URL = 'https://api.3ci.dev:5081/api/ci';
+
+
 export default new Vuex.Store( {
 	// TODO: switch to non-objects, we shouldn't cache multiple runs (should we?)
 	state: {
@@ -177,9 +181,9 @@ function genericPull( runId, target ) {
 
 	let url;
 	if ( target === 'runInfo' )
-		url = `/api/runInfo/${runId}`;
+		url = `${API_URL}/runInfo/${runId}`;
 	else
-		url = `/api/runInfo/${runId}/${target}`;
+		url = `${API_URL}/runInfo/${runId}/${target}`;
 
 	return fetch( url )
 		.then( res => res.json() )
@@ -197,7 +201,7 @@ function genericPull( runId, target ) {
 
 async function genericShowFile( test, sha ) {
 
-	const url = `/api/${test}/showFile/${sha}`;
+	const url = `${API_URL}/${test}/showFile/${sha}`;
 
 	return await fetch( url )
 		.then( res => res.json() )

@@ -66,7 +66,8 @@
 
 <script>
 
-const API_URL = '/api';
+// const API_URL = 'http://127.0.0.1:8080/api/ci';
+const API_URL = 'https://api.3ci.dev:5081/api/ci';
 
 export default {
 

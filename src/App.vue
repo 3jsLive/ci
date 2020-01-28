@@ -1,10 +1,9 @@
 <template>
-  <div class="h-100">
+  <div class="container-fluid d-flex flex-column vh-100">
     <router-view name="navbar" />
 
     <main
-      class="h-100"
-      style="padding-top: 56px;"
+      class="d-flex flex-fill justify-content-start overflow-auto"
     >
       <router-view />
     </main>
@@ -28,6 +27,5 @@ export default {
 </script>
 
 <style scoped>
-
 
 </style>
