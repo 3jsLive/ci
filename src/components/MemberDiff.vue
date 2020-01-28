@@ -1,37 +1,40 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-  <section>
+  <div class="d-flex flex-column flex-fill">
     <h4 class="text-center text-capitalize">
       {{ title }}
     </h4>
-    <div class="d-flex">
-      <template v-for="( shortname, index ) in Object.keys( contentObj )">
-        <table
-          v-if="ignoredNames.includes( shortname ) === false"
-          :key="index"
-          class="table m-2"
-        >
-          <thead class="thead-light">
-            <tr>
-              <th class="text-center">
-                {{ translationTable[ shortname ] }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <template v-for="( mem, index2 ) in contentObj[ shortname ][ memberName ]">
-              <tr :key="`${JSON.stringify( mem )}-${index2}`">
-                <td
-                  align="center"
-                  v-html="format( mem )"
-                />
+    <div class="d-flex flex-row">
+      <div class="flex-fill d-flex flex-row">
+        <template v-for="( shortname, index ) in Object.keys( contentObj ).filter( shortname => ignoredNames.includes( shortname ) === false )">
+          <table
+
+            :key="index"
+            class="table m-2"
+            :style="`width: ${100 / Object.keys( contentObj ).filter( shortname => ignoredNames.includes( shortname ) === false ).length}%;`"
+          >
+            <thead class="thead-light">
+              <tr>
+                <th class="text-center">
+                  {{ translationTable[ shortname ] }}
+                </th>
               </tr>
-            </template>
-          </tbody>
-        </table>
-      </template>
+            </thead>
+            <tbody>
+              <template v-for="( mem, index2 ) in contentObj[ shortname ][ memberName ]">
+                <tr :key="`${JSON.stringify( mem )}-${index2}`">
+                  <td
+                    align="center"
+                    v-html="format( mem )"
+                  />
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </template>
+      </div>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>

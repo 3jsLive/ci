@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
   <div
-    class="h-75"
+    class="d-flex flex-column overflow-auto"
   >
     <h4 class="text-center">
       Files

@@ -204,12 +204,12 @@
 
 <script>
 
-import { mapGetters } from 'vuex';
+// import { mapGetters } from 'vuex';
 
 const ResultsTableRow = () => import( /* webpackChunkName: "ResultsTableRow" */ '@/src/components/ResultsTableRow.vue' );
 
-// const API_URL = 'http://localhost:8855';
-const API_URL = '/api';
+// const API_URL = 'http://127.0.0.1:8080/api/ci';
+const API_URL = 'https://api.3ci.dev:5081/api/ci';
 
 
 export default {
@@ -511,13 +511,13 @@ table.table > tbody > tr > td:first-of-type { text-align: left; }
 table.table a { text-decoration-line: line-through}
 
 /* .overview */
-.overview .group { min-width: 65ch }
+.overview .group { min-width: 63ch }
 .overview .sparkline { width: 120px }
 .overview .result { width: 6ch }
 .overview .parent { width: 6ch }
-.overview .parent-delta { width: 9ch }
+.overview .parent-delta { width: 10ch }
 .overview .baseline { width: 7ch }
-.overview .baseline-delta { width: 11ch }
+.overview .baseline-delta { width: 12ch }
 .overview .history { width: 13ch }
 
 </style>

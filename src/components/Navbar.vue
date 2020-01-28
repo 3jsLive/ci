@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <!-- <a
       class="navbar-brand"
       href="#"
@@ -168,6 +168,7 @@ export default {
 
 				all[ test.group ] = all[ test.group ] || [];
 				all[ test.group ].push( test );
+				all[ test.group ].sort( ( a, b ) => a.description.localeCompare( b.description ) );
 
 				return all;
 
@@ -300,8 +301,15 @@ export default {
 .dropdown-menu > .dropdown-item:not(.active):hover {
     background-color: lightgray;
 }
+
 .dropdown-menu > .dropdown-item.disabled {
     color: lightgray;
+}
+
+nav {
+	margin-right: -15px;
+    margin-left: -15px;
+	padding: 0 1rem;
 }
 </style>
 

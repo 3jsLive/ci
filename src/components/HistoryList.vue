@@ -12,9 +12,13 @@
       >
         <ul>
           <li>
-            <router-link :to="'/runs/' + history[ 0 ].runId">
+            <router-link
+              v-if="history[ 0 ].runId !== - 1"
+              :to="'/runs/' + history[ 0 ].runId"
+            >
               {{ `#${history[ 0 ].runId}` }}
-            </router-link>: {{ history[ 0 ].sha }} <span class="badge badge-pill badge-primary">Base</span>
+            </router-link>
+            <span v-else>---</span>: {{ history[ 0 ].sha }} <span class="badge badge-pill badge-primary">Base</span>
           </li>
           <li
             v-for="row in history.slice(1)"

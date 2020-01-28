@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-flex flex-column">
     <template v-if="data.errors.length === 0">
       <MemberDiff
         v-if="countMemberEntries[ 'properties' ] && countMemberEntries[ 'properties' ] > 0"
@@ -28,7 +28,6 @@
     </div>
   </div>
 </template>
-
 <script>
 
 const MemberDiff = () => import( /* webpackChunkName: "MemberDiff" */ './MemberDiff.vue' );
