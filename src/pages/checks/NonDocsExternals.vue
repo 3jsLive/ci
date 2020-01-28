@@ -101,7 +101,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #content { height: 100%; overflow: hidden }
 #content.row {
     height: 100%;
