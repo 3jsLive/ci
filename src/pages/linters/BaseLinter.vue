@@ -1,7 +1,7 @@
 <template>
   <div
     id="content"
-    class="d-flex flex-fill"
+    class="d-flex h-100 overflow-hidden pb-3"
   >
     <FilesList
       v-if="content"
@@ -10,7 +10,7 @@
       style="z-index: 0"
     />
     <div
-      class="flex-fill d-flex flex-column align-items-center overflow-auto ml-1 mr-3"
+      class="flex-column flex-fill overflow-auto"
     >
       <div
         v-if="showError !== false"
@@ -206,11 +206,6 @@ export default {
 </script>
 
 <style scoped>
-#content { height: 100%; overflow: hidden }
-#content.row {
-    height: 100%;
-	overflow: auto;
-}
 .v-datatable-light .header-item {
   cursor: pointer;
   color: #337ab7;

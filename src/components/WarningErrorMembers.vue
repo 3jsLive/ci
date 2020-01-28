@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column">
+  <div>
     <template v-if="data.errors.length === 0">
       <MemberDiff
         v-if="countMemberEntries[ 'properties' ] && countMemberEntries[ 'properties' ] > 0"

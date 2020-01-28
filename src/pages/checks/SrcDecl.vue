@@ -1,27 +1,27 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-  <div class="container-fluid d-flex flex-column h-100">
-    <div
-      id="content"
-      class="row d-flex align-items-stretch"
-    >
-      <FilesList
-        v-if="content"
-        :files="filesWithCounter"
-        style="z-index: 0"
-      />
-      <div
+  <div
+    id="content"
+    class="d-flex h-100 overflow-hidden pb-3"
+  >
+    <FilesList
+      v-if="content"
+      :files="filesWithCounter"
+      style="z-index: 0"
+    />
+    <!-- <div
         v-if="currentFile !== '' && content.results[ currentFile ] && ( content.results[ currentFile ].results.length > 0 || content.results[ currentFile ].errors.length > 0 )"
         class="flex-fill h-100 ml-4 pl-0"
         style="width: 500px;overflow: scroll;max-width: 100%"
-      >
-        <WarningErrorMembers
-          :data="content.results[ currentFile ]"
-          title=""
-          :shortname-to-table-caption="shortnameToTableCaption"
-        />
-      </div>
+      > -->
+    <div class="flex-column flex-fill overflow-auto">
+      <WarningErrorMembers
+        :data="content.results[ currentFile ]"
+        title=""
+        :shortname-to-table-caption="shortnameToTableCaption"
+      />
     </div>
+    <!-- </div> -->
   </div>
 </template>
 
@@ -107,11 +107,3 @@ export default {
 
 };
 </script>
-
-<style scoped>
-#content { height: 100%; overflow: hidden }
-#content.row {
-    height: 100%;
-	overflow: auto;
-}
-</style>

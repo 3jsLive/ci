@@ -1,7 +1,7 @@
 <template>
   <div
     id="content"
-    class="d-flex flex-fill"
+    class="d-flex h-100 overflow-hidden pb-3"
   >
     <FilesList
       v-if="content"
@@ -11,21 +11,19 @@
 
     <div
       v-if="content.results[ currentFile ]"
-      class="flex-fill d-flex"
+      class="flex-column flex-fill overflow-auto"
     >
-      <div class="d-flex flex-column flex-fill">
-        <WarningErrorMembers
-          :data="content.results[ currentFile ]"
-          :shortname-to-table-caption="shortnameToTableCaption"
-          title=""
-        />
-        <div
-          v-if="showLegacy"
-          class="row"
-        >
-          <div class="col">
-            <span class="badge badge-pill badge-warning">LEGACY</span>: This member is referenced in <code>Three.Legacy.js</code>, likely a false positive
-          </div>
+      <WarningErrorMembers
+        :data="content.results[ currentFile ]"
+        :shortname-to-table-caption="shortnameToTableCaption"
+        title=""
+      />
+      <div
+        v-if="showLegacy"
+        class="row"
+      >
+        <div class="col">
+          <span class="badge badge-pill badge-warning">LEGACY</span>: This member is referenced in <code>Three.Legacy.js</code>, likely a false positive
         </div>
       </div>
     </div>
@@ -155,11 +153,3 @@ export default {
 
 };
 </script>
-
-<style scoped>
-#content { height: 100%; overflow: hidden }
-#content.row {
-    height: 100%;
-	overflow: auto;
-}
-</style>

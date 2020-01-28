@@ -3,7 +3,7 @@
     <router-view name="navbar" />
 
     <main
-      class="d-flex flex-fill justify-content-start overflow-auto"
+      class="mt-5 overflow-auto"
     >
       <router-view />
     </main>

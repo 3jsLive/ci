@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
   <div
-    class="d-flex flex-column overflow-auto"
+    class="d-flex flex-column h-100 overflow-hidden"
   >
     <h4 class="text-center">
       Files
@@ -20,28 +20,24 @@
     <div
       id="files-container"
       :ref="'filesContainer'"
-      class="overflow-auto h-100 ml-3"
+      class="overflow-auto"
     >
-      <ul
-        class="list-group h-100"
+      <button
+        v-for="( f, index ) in queryMatches()"
+        :key="`${f.raw}-${index}`"
+        :ref="f.raw"
+        type="button"
+        class="list-group-item-action list-group-item d-flex justify-content-between align-items-center py-1"
+        :class="{ active: currentFile === f.raw, 'bg-warning text-dark': f.warning || false, 'bg-danger text-white': f.error || false }"
+        @mousedown="mousedown( f.raw )"
       >
-        <button
-          v-for="( f, index ) in queryMatches()"
-          :key="`${f.raw}-${index}`"
-          :ref="f.raw"
-          type="button"
-          class="list-group-item-action list-group-item d-flex justify-content-between align-items-center py-1"
-          :class="{ active: currentFile === f.raw, 'bg-warning text-dark': f.warning || false, 'bg-danger text-white': f.error || false }"
-          @mousedown="mousedown( f.raw )"
-        >
-          <span v-html="f.markup" />
-          <span
-            v-if="f.decoration && ! f.error"
-            :class="[{ 'text-dark': currentFile === f.raw }, f.decoration.class ]"
-            class="badge btn-lg badge-pill"
-          >{{ f.decoration.text }}</span>
-        </button>
-      </ul>
+        <span v-html="f.markup" />
+        <span
+          v-if="f.decoration && ! f.error"
+          :class="[{ 'text-dark': currentFile === f.raw }, f.decoration.class ]"
+          class="badge btn-lg badge-pill"
+        >{{ f.decoration.text }}</span>
+      </button>
     </div>
   </div>
 </template>

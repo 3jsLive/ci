@@ -2,25 +2,25 @@
 <template>
   <div
     id="content"
-    class="d-flex flex-fill"
+    class="d-flex h-100 overflow-hidden pb-3"
   >
     <FilesList
       v-if="content"
       :files="filesWithCounter"
       style="z-index: 0"
     />
-    <div
+    <!--     <div
       v-if="currentFile !== '' && ( content.results[ currentFile ].results.length > 0 || content.results[ currentFile ].errors.length > 0 )"
       class="flex-fill d-flex"
-    >
-      <div class="d-flex flex-column flex-fill">
-        <WarningErrorMembers
-          :data="content.results[ currentFile ]"
-          :title="'Results'"
-          :shortname-to-table-caption="shortnameToTableCaption"
-        />
-      </div>
+    > -->
+    <div class="flex-column flex-fill overflow-auto">
+      <WarningErrorMembers
+        :data="content.results[ currentFile ]"
+        :title="'Results'"
+        :shortname-to-table-caption="shortnameToTableCaption"
+      />
     </div>
+    <!-- </div> -->
   </div>
 </template>
 
@@ -112,12 +112,4 @@ export default {
 </script>
 
 <style scoped>
-#content { height: 100%; overflow: hidden }
-#content.row {
-    height: 100%;
-	overflow: auto;
-}
-</style>
-<style>
-main { overflow: auto; }
 </style>

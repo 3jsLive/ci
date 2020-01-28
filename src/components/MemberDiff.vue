@@ -1,17 +1,19 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-  <div class="d-flex flex-column flex-fill">
+  <div>
     <h4 class="text-center text-capitalize">
       {{ title }}
     </h4>
-    <div class="d-flex flex-row">
-      <div class="flex-fill d-flex flex-row">
-        <template v-for="( shortname, index ) in Object.keys( contentObj ).filter( shortname => ignoredNames.includes( shortname ) === false )">
+    <div class="d-flex overflow-hidden">
+      <template v-for="( shortname, index ) in Object.keys( contentObj ).filter( shortname => ignoredNames.includes( shortname ) === false )">
+        <div
+          :key="index"
+          class="d-flex flex-fill h-100"
+        >
           <table
 
-            :key="index"
-            class="table m-2"
-            :style="`width: ${100 / Object.keys( contentObj ).filter( shortname => ignoredNames.includes( shortname ) === false ).length}%;`"
+
+            class="h-100 m-2 table"
           >
             <thead class="thead-light">
               <tr>
@@ -31,8 +33,8 @@
               </template>
             </tbody>
           </table>
-        </template>
-      </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>

@@ -1,6 +1,9 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+  <nav
+    class="bg-dark navbar navbar-dark navbar-expand-md position-fixed w-100"
+    style="z-index: 10; top: 0px;"
+  >
     <!-- <a
       class="navbar-brand"
       href="#"

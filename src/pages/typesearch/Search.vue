@@ -2,7 +2,7 @@
 <template>
   <div
     id="content"
-    class="d-flex flex-grow-1"
+    class="d-flex flex-grow-1 vh-100"
   >
     <div class="flex-grow-0">
       <div
