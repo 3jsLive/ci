@@ -122,6 +122,7 @@
 
 <script>
 
+import Vue from 'vue';
 import store from '@/src/store';
 
 export default {
@@ -181,6 +182,18 @@ export default {
 
 	},
 
+	mounted() {
+
+		this.dropify();
+
+	},
+
+	updated() {
+
+		this.dropify();
+
+	},
+
 	methods: {
 
 		bracketize( val ) {
@@ -189,6 +202,16 @@ export default {
 				return val.replace( /</g, '&lt;' ).replace( />/g, '&gt;' );
 			else
 				return val;
+
+		},
+
+		dropify( ) {
+
+			document.querySelectorAll( '.dropdown-toggle' ).forEach( link => {
+
+				new Vue.prototype.$BSN.Dropdown( link, true );
+
+			} );
 
 		}
 

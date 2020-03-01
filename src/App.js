@@ -1,18 +1,9 @@
 import Vue from 'vue';
 
 
-// TODO: drop them once we've imported bootstrap.native
-import 'jquery';
-import 'popper.js';
-
-
-// TODO: replace bootstrap with bootstrap.native
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-// import '../public/bootstrap-slate.min.css';
-// import 'bootstrap.native/dist/bootstrap-native-v4';
-// import BootstrapNative from 'bootstrap.native/dist/bootstrap-native-v4';
-// Vue.prototype.$BSN = BootstrapNative;
+import './scss/bootstrap.scss';
+import * as BootstrapNative from 'bootstrap.native';
+Vue.prototype.$BSN = BootstrapNative;
 
 
 // import App from './App.vue';
@@ -22,14 +13,6 @@ const App = () => import( /* webpackChunkName: "App" */ './App.vue' );
 import VueRouter from 'vue-router';
 import store from './store';
 import { sync } from 'vuex-router-sync';
-
-
-// TODO: decide whether to go back to FA?
-// import { library } from '@fortawesome/fontawesome-svg-core';
-// import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
-// import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-// library.add( faExclamationCircle );
-// Vue.component( 'font-awesome-icon', FontAwesomeIcon );
 
 
 import VueVirtualScroller from 'vue-virtual-scroller';
@@ -447,12 +430,5 @@ const app = new Vue( {
 	store
 } ).$mount( '#app' );
 
-// needs to run after navbar init
-var myDropdowns = document.querySelectorAll( '.dropdown-toggle' );
-Array.from( myDropdowns ).forEach( link => {
-
-	new Vue.prototype.$BSN.Dropdown( link, true );
-
-} );
 
 console.log( { app } );
