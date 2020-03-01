@@ -1,4 +1,5 @@
 // const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
+const webpack = require( 'webpack' );
 const path = require( 'path' );
 function resolve( dir ) {
 
@@ -21,34 +22,51 @@ module.exports = {
 			}
 		}
 	},
-	configureWebpack: {
+	configureWebpack: config => {
+
+		return {
+
+			output: {
+				filename: '[name].js'
+			},
+			plugins: [
+				new webpack.NormalModuleReplacementPlugin(
+					/environments\/environment/gi,
+					resource => ( ! config.mode || config.mode === 'none' ) ? resource : resource.request += '.' + config.mode
+				)
+			],
+			resolve: {
+				alias: {
+					'@': resolve( '.' ),
+					vue$: 'vue/dist/vue.esm.js',
+					vuex$: 'vuex/dist/vuex.esm.js'
+				}
+			},
+			devtool: 'none'
+
+		};
+
 		// alt
-		output: {
-			filename: '[name].js'
-		},
-		// alt
-		/* plugins: [
-			new HtmlWebpackPlugin( {
-				filename: 'index.html',
-				template: './public/index.html',
-				chunks: [ 'chunk-vendors', 'chunk-common', 'main' ]
-			} )
-		], */
-		// neu
-		resolve: {
-			alias: {
-				'@': resolve( '.' ),
-				vue$: "vue/dist/vue.esm.js",
-				vuex$: "vuex/dist/vuex.esm.js"
-			}
-		}
+		// plugins: [
+		// new HtmlWebpackPlugin( {
+		// 	filename: 'index.html',
+		// 	template: './public/index.html',
+		// 	chunks: [ 'chunk-vendors', 'chunk-common', 'main' ]
+		// } )
+		// ],
 		// devtool: 'eval-source-map'
+
 	},
 	chainWebpack: config => {
 
 		// alt
 		// config.resolve.alias
 		// 	.set( '@', resolve( '.' ) );
+
+		// config.plugin( 'webpack.NormalModuleReplacementPlugin' ).use( webpack.NormalModuleReplacementPlugin, [
+		// 	'.\/misc\/config.development.js', './misc/config.production.js'
+		//   ] );
+
 
 		// neu Bootstrap.native loader
 		config.module
@@ -59,7 +77,7 @@ module.exports = {
 			.options( {
 
 				// ['alert', 'button',  'carousel', 'collapse', 'dropdown', 'modal', 'popover', 'scrollspy', 'tab', 'tooltip']
-				only: [ 'button', 'collapse' ]
+				only: [ 'button', 'dropdown' ]
 				// ignore: [ 'alert', 'carousel', 'dropdown', 'modal', 'scrollspy', 'tooltip', 'popover', 'tab' ]
 
 			} )
