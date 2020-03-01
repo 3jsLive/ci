@@ -25,7 +25,6 @@ module.exports = {
 	configureWebpack: config => {
 
 		return {
-
 			output: {
 				filename: '[name].js'
 			},
@@ -43,7 +42,6 @@ module.exports = {
 				}
 			},
 			devtool: 'none'
-
 		};
 
 		// alt
@@ -59,16 +57,6 @@ module.exports = {
 	},
 	chainWebpack: config => {
 
-		// alt
-		// config.resolve.alias
-		// 	.set( '@', resolve( '.' ) );
-
-		// config.plugin( 'webpack.NormalModuleReplacementPlugin' ).use( webpack.NormalModuleReplacementPlugin, [
-		// 	'.\/misc\/config.development.js', './misc/config.production.js'
-		//   ] );
-
-
-		// neu Bootstrap.native loader
 		config.module
 			.rule( 'bootstrap.native-loader' )
 			.test( /bootstrap\.native/ )
