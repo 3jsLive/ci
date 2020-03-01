@@ -1,8 +1,7 @@
 module.exports = {
 	root: true,
 	env: {
-		browser: true,
-		jquery: true
+		browser: true
 	},
 	extends: [
 		'plugin:vue/essential',
@@ -13,7 +12,7 @@ module.exports = {
 		'vue'
 	],
 	parserOptions: {
-		parser: 'babel-eslint',
-		'ecmaVersion': 2018
+		parser: "babel-eslint",
+		ecmaVersion: 2018
 	}
 };
