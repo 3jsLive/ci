@@ -4,16 +4,6 @@
       id="content"
     >
       <div class="row">
-        <div class="col">
-          <div class="alert bg-warning">
-            <h5 class="alert-heading font-weight-bold">
-              Warning
-            </h5>
-            Programmer-crafted interface straight ahead! No designers were harmed in the making of this.. or consulted.
-          </div>
-        </div>
-      </div>
-      <div class="row">
         <div
           class="col-6"
           style="margin-left: auto; margin-right: auto;"
