@@ -19,8 +19,6 @@
             Baseline
           </th><th class="baseline-delta">
             % Baseline
-          </th><th class="history">
-            History
           </th>
         </tr>
         <template v-for="( [ test, name ] ) of Object.entries( $workerToDescription.checks )">
@@ -66,8 +64,6 @@
             Baseline
           </th><th class="baseline-delta">
             % Baseline
-          </th><th class="history">
-            History
           </th>
         </tr>
         <template v-for="( [ test, name ] ) of Object.entries( $workerToDescription.linters )">
@@ -113,8 +109,6 @@
             Baseline
           </th><th class="baseline-delta">
             % Baseline
-          </th><th class="history">
-            History
           </th>
         </tr>
         <template v-for="( [ test, name ] ) of Object.entries( $workerToDescription.typesearch )">
@@ -148,8 +142,6 @@
             Baseline
           </th><th class="baseline-delta">
             % Baseline
-          </th><th class="history">
-            History
           </th>
         </tr>
         <template v-for="( [ test, name ] ) of Object.entries( $workerToDescription.profiling )">
@@ -195,8 +187,6 @@
             Baseline
           </th><th class="baseline-delta">
             % Baseline
-          </th><th class="history">
-            History
           </th>
         </tr>
         <template v-for="( [ test, name ] ) of Object.entries( $workerToDescription.dependencies )">
