@@ -16,7 +16,7 @@
       > -->
     <div class="flex-column flex-fill overflow-auto">
       <WarningErrorMembers
-        :data="content.results[ currentFile ]"
+        :data="content.results[ currentFile ] || {}"
         title=""
         :shortname-to-table-caption="shortnameToTableCaption"
       />

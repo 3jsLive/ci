@@ -29,7 +29,7 @@
                   v-if="init"
                   class="table table-sm"
                 >
-                  <tbody>
+                  <tbody data-cy="runs-list">
                     <tr align="center">
                       <th>Run</th>
                       <th>Revision</th>

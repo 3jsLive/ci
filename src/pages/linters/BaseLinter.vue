@@ -16,6 +16,7 @@
         v-if="showError !== false"
         class="alert alert-danger text-center"
         role="alert"
+        data-cy="alert-danger"
       >
         <strong>Error</strong><br>{{ showError }}
       </div>
@@ -27,6 +28,7 @@
         </h4>
 
         <DataTable
+          data-cy="results-table"
           :header-fields="tableHeaders"
           :data="tableData"
           :css="tableCss"
@@ -59,6 +61,11 @@ export default {
 		'tableHeaders': {
 			type: Array,
 			required: true
+		},
+		'filename': {
+			type: String,
+			required: false,
+			default: ''
 		}
 	},
 

@@ -20,8 +20,17 @@
             v-if="showError !== false"
             class="alert alert-danger text-center"
             role="alert"
+            data-cy="alert-danger"
           >
-            <strong>Error</strong><br>{{ showError }}
+            <strong>{{ `Error${showError.length > 1 ? 's' : ''}:` }}</strong>
+            <template
+              v-for="( err, index ) in showError"
+            >
+              <br :key="`${err}-${index}-br`">
+              <span :key="`${err}-${index}-text`">
+                {{ err }}
+              </span>
+            </template>
           </div>
           <template
             v-if="tableData && showError === false"
@@ -36,6 +45,7 @@
               :css="tableCss"
               :sort-field="sortField"
               :sort="sortDir"
+              data-cy="results-table"
               @onUpdate="dtUpdateSort"
             >
               <div

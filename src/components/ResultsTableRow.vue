@@ -37,6 +37,7 @@ data.test	current test
           :title="`${data.errors} errors encountered`"
         /> -->
         <router-link
+          :data-cy="`link-${data.test}${( data.linkTarget && data.linkTarget.includes( '?' ) ) ? '-' + data.linkText : ''}`"
           :class="{ 'offline text-muted': data.result === '-' }"
           :to="data.linkTarget"
           append
@@ -44,21 +45,21 @@ data.test	current test
           {{ data.linkText }}
         </router-link> <a
           v-if="showExpander && somethingChanged"
-          data-toggle="collapse"
-          :href="`#files-${data.test}`"
+          :data-cy="`hits-button-${data.test}`"
           role="button"
           @click="detailRequest( data.test, 'all' )"
         ><small>[hits]</small></a>
         <a
           v-if="showExpander && somethingChanged"
-          data-toggle="collapse"
-          :href="`#files-${data.test}`"
+          :data-cy="`diff-button-${data.test}`"
           role="button"
           @click="detailRequest( data.test, 'diff' )"
         ><small class="pl-2">[diff]</small></a>
-        <!-- <div>foo▲▼</div> -->
       </template>
-      <span v-else>{{ data.name }}</span>
+      <span
+        v-else
+        :data-cy="data.name"
+      >{{ data.name }}</span>
     </td>
     <td>
       <highcharts
@@ -67,40 +68,35 @@ data.test	current test
         :callback="chartLoaded"
         class="chart"
         :options="chartOptions"
+        :data-cy="`chart-${data.test}`"
+        :data-cy-data="`${JSON.stringify( chartOptions.series[ 0 ].data )}`"
       />
     </td>
-    <td>{{ data.result }}</td>
+    <td :data-cy="`result-${data.test}${( data.linkTarget && data.linkTarget.includes( '?' ) ) ? '-' + data.linkText : ''}`">
+      {{ data.result }}
+    </td>
     <template v-if="showParent">
-      <td>{{ ( data.parent === undefined ) ? '-' : data.parent }}</td>
-      <td :class="percentageColors( data.parentDelta, data.parentHigherWorse )">
+      <td :data-cy="`parent-${data.test}${( data.linkTarget && data.linkTarget.includes( '?' ) ) ? '-' + data.linkText : ''}`">
+        {{ ( data.parent === undefined ) ? '-' : data.parent }}
+      </td>
+      <td
+        :data-cy="`parent-delta-${data.test}${( data.linkTarget && data.linkTarget.includes( '?' ) ) ? '-' + data.linkText : ''}`"
+        :class="percentageColors( data.parentDelta, data.parentHigherWorse )"
+      >
         {{ data.parentDelta | prettyPercentage }}
       </td>
     </template>
     <template v-if="showBaseline">
-      <td>{{ ( data.baseline === undefined ) ? '-' : data.baseline }}</td>
-      <td :class="percentageColors( data.baselineDelta, data.baselineHigherWorse )">
+      <td :data-cy="`baseline-${data.test}${( data.linkTarget && data.linkTarget.includes( '?' ) ) ? '-' + data.linkText : ''}`">
+        {{ ( data.baseline === undefined ) ? '-' : data.baseline }}
+      </td>
+      <td
+        :data-cy="`baseline-delta-${data.test}${( data.linkTarget && data.linkTarget.includes( '?' ) ) ? '-' + data.linkText : ''}`"
+        :class="percentageColors( data.baselineDelta, data.baselineHigherWorse )"
+      >
         {{ data.baselineDelta | prettyPercentage }}
       </td>
     </template>
-    <td
-      v-if="showHistory"
-    >
-      <router-link
-        class="offline"
-        :class="{ 'text-muted': data.result === '-' }"
-        :to="
-          `/runs/${data.run}/matrix/${data.test}`"
-      >
-        Matrix
-      </router-link>
-      <router-link
-        class="offline"
-        :class="{ 'text-muted': data.result === '-' }"
-        :to="`/runs/${data.run}/plot/${data.test}`"
-      >
-        Plot
-      </router-link>
-    </td>
   </tr>
 </template>
 
@@ -169,7 +165,6 @@ export default {
 	data: function () {
 
 		return {
-			// updateArgs: [ true, true, { duration: 1000 } ],
 			chartOptions: {
 				chart: {
 					backgroundColor: null,

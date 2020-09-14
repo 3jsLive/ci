@@ -11,6 +11,7 @@
           JavaScript
         </h4>
         <DataTable
+          data-cy="table-javascript"
           :header-fields="tableHeaders"
           :data="tableDataJs"
           :css="tableCss"
@@ -23,6 +24,7 @@
           TypeScript
         </h4>
         <DataTable
+          data-cy="table-typescript"
           :header-fields="tableHeaders"
           :data="tableDataTs"
           :css="tableCss"

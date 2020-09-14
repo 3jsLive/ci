@@ -14,6 +14,7 @@
         v-model="query"
         type="search"
         class="form-control"
+        data-cy="filter"
         placeholder="Type to filter by name"
       >
     </div>
@@ -21,21 +22,27 @@
       id="files-container"
       :ref="'filesContainer'"
       class="overflow-auto"
+      data-cy="files-list"
     >
       <button
         v-for="( f, index ) in queryMatches()"
         :key="`${f.raw}-${index}`"
         :ref="f.raw"
         type="button"
+        data-cy="files-list-item"
         class="list-group-item-action list-group-item d-flex justify-content-between align-items-center py-1"
         :class="{ active: currentFile === f.raw, 'bg-warning text-dark': f.warning || false, 'bg-danger text-white': f.error || false }"
         @mousedown="mousedown( f.raw )"
       >
-        <span v-html="f.markup" />
+        <span
+          data-cy="files-list-item-text"
+          v-html="f.markup"
+        />
         <span
           v-if="f.decoration && ! f.error"
+          data-cy="files-list-item-badge"
           :class="[{ 'text-dark': currentFile === f.raw }, f.decoration.class ]"
-          class="badge btn-lg badge-pill"
+          class="badge badge-pill"
         >{{ f.decoration.text }}</span>
       </button>
     </div>
@@ -61,6 +68,11 @@ export default {
 		'files': {
 			type: Object,
 			default: () => ( {} )
+		},
+		'selected': {
+			type: String,
+			default: '',
+			required: false
 		}
 	},
 

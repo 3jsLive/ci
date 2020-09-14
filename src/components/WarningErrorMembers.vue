@@ -7,6 +7,7 @@
         :translation-table="shortnameToTableCaption"
         :title="'Properties ' + title"
         member-name="properties"
+        data-cy="properties-table"
       />
 
       <MemberDiff
@@ -15,6 +16,7 @@
         :translation-table="shortnameToTableCaption"
         :title="'Methods ' + title"
         member-name="methods"
+        data-cy="methods-table"
       />
     </template>
 
@@ -22,6 +24,7 @@
       v-else-if="data.errors.length !== 0"
       class="alert alert-danger"
       role="alert"
+      data-cy="warning-error-members-alert"
     >
       <strong class="text-uppercase">{{ "WORKER ERROR " + title }}</strong>
       <br>{{ data.errors }}

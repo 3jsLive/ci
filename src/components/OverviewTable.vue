@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-cy="overview">
     <table class="table table-sm overview">
       <tbody>
         <tr>
@@ -159,8 +159,20 @@
             :show-history="true"
             :show-baseline="true"
             :show-links="true"
+            :show-expander="true"
             :data="prepResultsTableRowData( 'profiling', test, name )"
           />
+          <template v-if="showDetails( test )">
+            <results-table-row
+              v-for="file in Object.keys( detailsPrepped[ test ] )"
+              :key="`${test}-${file}-details`"
+              :show-parent="true"
+              :show-history="false"
+              :show-baseline="true"
+              :show-links="true"
+              :data="prepResultsTableRowDataDetails( 'profiling', test, name, file )"
+            />
+          </template>
         </template>
       </tbody>
     </table>
@@ -194,8 +206,20 @@
             :show-history="true"
             :show-baseline="true"
             :show-links="true"
+            :show-expander="true"
             :data="prepResultsTableRowData( 'dependencies', test, name )"
           />
+          <template v-if="showDetails( test )">
+            <results-table-row
+              v-for="file in Object.keys( detailsPrepped[ test ] )"
+              :key="`${test}-${file}-details`"
+              :show-parent="true"
+              :show-history="false"
+              :show-baseline="true"
+              :show-links="true"
+              :data="prepResultsTableRowDataDetails( 'dependencies', test, name, file )"
+            />
+          </template>
         </template>
       </tbody>
     </table>
@@ -431,8 +455,6 @@ export default {
 
 					this.$set( this.details, test, prepared );
 
-					console.log( { details: this.details } );
-
 					return prepared;
 
 				} )
@@ -442,7 +464,7 @@ export default {
 
 						this.$set( this.detailsPrepped, test, prepared );
 
-					} else {
+					} else if ( amount === 'diff' ) {
 
 						const reduced = Object.entries( this.details[ test ] ).reduce( ( all, [ file, result ] ) => {
 
@@ -454,6 +476,10 @@ export default {
 						}, {} );
 
 						this.$set( this.detailsPrepped, test, reduced );
+
+					} else {
+
+						throw new Error( `Unknown detailedOverview request: ${amount}` );
 
 					}
 
@@ -510,13 +536,13 @@ table.table > tbody > tr > td:first-of-type { text-align: left; }
 table.table a { text-decoration-line: line-through}
 
 /* .overview */
-.overview .group { min-width: 63ch }
+.overview .group { min-width: 60ch }
 .overview .sparkline { width: 120px }
 .overview .result { width: 6ch }
 .overview .parent { width: 6ch }
 .overview .parent-delta { width: 10ch }
 .overview .baseline { width: 7ch }
 .overview .baseline-delta { width: 12ch }
-.overview .history { width: 13ch }
+.overview .history { width: 16ch }
 
 </style>

@@ -1,6 +1,7 @@
 <template>
   <div
     class="card"
+    data-cy="runInfo"
   >
     <h5 class="card-header">
       Run info
@@ -12,31 +13,62 @@
       >
         <table class="table table-sm table-striped">
           <tbody>
-            <tr><td>Started on</td><td>{{ new Date( runInfo.timestamp ).toUTCString() }}</td></tr>
-            <tr><td>Duration</td><td>{{ runInfo.duration | timespanString }}</td></tr>
             <tr>
-              <td>Delay after commit</td><td :style="{ filter: ( runInfo.delayAfterCommit === 0 ) ? 'blur(10px)' : ''}">
+              <td>Started on</td><td data-cy="runInfo-start">
+                {{ new Date( runInfo.timestamp ).toUTCString() }}
+              </td>
+            </tr>
+            <tr>
+              <td>Duration</td><td data-cy="runInfo-duration">
+                {{ runInfo.duration | timespanString }}
+              </td>
+            </tr>
+            <tr>
+              <td>Delay after commit</td><td
+                data-cy="runInfo-delay"
+                :style="{ filter: ( runInfo.delayAfterCommit === 0 ) ? 'blur(10px)' : ''}"
+              >
                 {{ runInfo.delayAfterCommit | timespanString }}
               </td>
             </tr>
-            <tr><td>Trigger</td><td>{{ runInfo.reason }}</td></tr>
             <tr>
-              <td>Baseline run</td><td>
-                <router-link :to="`/runs/${runInfo.baselineRunId}`">
+              <td>Trigger</td><td data-cy="runInfo-reason">
+                {{ runInfo.reason }}
+              </td>
+            </tr>
+            <tr>
+              <td>Baseline run</td><td data-cy="runInfo-baseline">
+                <router-link
+                  v-if="runInfo.baselineRunId !== null"
+                  :to="`/runs/${runInfo.baselineRunId}`"
+                >
                   #{{ runInfo.baselineRunId }}
                 </router-link>
+                <span v-else>N/A</span>
               </td>
             </tr>
             <tr>
-              <td>Parent run</td><td>
-                <router-link :to="`/runs/${runInfo.parentRunId}`">
+              <td>Parent run</td><td data-cy="runInfo-parent">
+                <router-link
+                  v-if="runInfo.parentRunId !== null"
+                  :to="`/runs/${runInfo.parentRunId}`"
+                >
                   #{{ runInfo.parentRunId }}
                 </router-link>
+                <span v-else>N/A</span>
               </td>
             </tr>
-            <tr><td>Worker errors</td><td>{{ runInfo.majorErrors }}</td></tr>
-            <!-- <tr><td>Dependencies recalculated</td><td><span class="bg-warning">TODO</span>{{ runInfo.dependenciesChanged }}</td></tr> -->
-            <tr><td>Machine</td><td>{{ runInfo.info }}</td></tr>
+            <tr>
+              <td>Worker errors</td><td data-cy="runInfo-errors">
+                {{ runInfo.majorErrors }}
+              </td>
+            </tr>
+            <!-- <tr><td>Dependencies recalculated</td><td><span class="bg-warning">TODO</span>{{ runInfo.fullSizeEntry }}</td></tr> -->
+            <tr>
+              <td>Machine</td><td data-cy="runInfo-machine">
+                {{ runInfo.info }}
+              </td>
+            </tr>
           </tbody>
         </table>
       </p>

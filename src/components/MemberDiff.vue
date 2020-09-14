@@ -11,7 +11,7 @@
           class="d-flex flex-fill h-100"
         >
           <table
-
+            data-cy="data-column"
 
             class="h-100 m-2 table"
           >

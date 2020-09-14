@@ -10,7 +10,7 @@
         v-if="history"
         class="card-text"
       >
-        <ul>
+        <ul data-cy="history-list">
           <li>
             <router-link
               v-if="history[ 0 ].runId !== - 1"
@@ -18,7 +18,13 @@
             >
               {{ `#${history[ 0 ].runId}` }}
             </router-link>
-            <span v-else>---</span>: {{ history[ 0 ].sha }} <span class="badge badge-pill badge-primary">Base</span>
+            <span
+              v-else
+              data-cy="history-list-missing"
+            >---</span>: {{ history[ 0 ].sha }} <span
+              data-cy="history-list-base"
+              class="badge badge-pill badge-primary"
+            >Base</span>
           </li>
           <li
             v-for="row in history.slice(1)"
@@ -30,7 +36,10 @@
             >
               {{ `#${row.runId}` }}
             </router-link>
-            <span v-else>---</span>{{ `: ${row.sha}` }}
+            <span
+              v-else
+              data-cy="history-list-missing"
+            >---</span>{{ `: ${row.sha}` }}
           </li>
         </ul>
       </p>

@@ -1,0 +1,16 @@
+{
+	
+	"baseUrl": "http://127.0.0.1:8080",
+	"viewportWidth": 1280,
+	"viewportHeight": 800,
+
+	"experimentalComponentTesting": true,
+	"componentFolder": "cypress/integration/components",
+
+	"testFiles": "**/*.spec.js",
+
+	"video": false,
+
+	"numTestsKeptInMemory": 1
+
+}

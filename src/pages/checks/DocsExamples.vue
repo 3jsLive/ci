@@ -13,7 +13,7 @@
         </h4>
         <DataTable
           :header-fields="tableHeaders"
-          :data="tableData1"
+          :data="tableData"
           :css="tableCss"
         >
           <div
@@ -21,10 +21,20 @@
             slot-scope="props"
           >
             <span v-if="props.rowData.value.example">{{ props.rowData.value.example }}</span>
-            <span
+            <div
               v-else
-              class="alert alert-danger"
-            ><strong>Error: </strong>{{ props.rowData.value.error }}</span>
+              class="alert alert-danger mb-0"
+            >
+              <strong>{{ `Error${props.rowData.value.error.length > 1 ? 's' : ''}:` }}</strong>
+              <template
+                v-for="( err, index ) in props.rowData.value.error"
+              >
+                <br :key="`${err}-${index}-br`">
+                <span :key="`${err}-${index}-text`">
+                  {{ err }}
+                </span>
+              </template>
+            </div>
           </div>
         </DataTable>
       </div>
@@ -106,20 +116,6 @@ export default {
 					return all;
 
 				}, [] );
-
-			} else {
-
-				return [];
-
-			}
-
-		},
-
-		files1: function () {
-
-			if ( this.content1 && this.content1.results ) {
-
-				return Object.keys( this.content1.results );
 
 			} else {
 
