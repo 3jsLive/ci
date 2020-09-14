@@ -133,7 +133,7 @@
       <tbody>
         <tr>
           <th class="group">
-            Profiling (# of suspicious runs)
+            Profiling (# of hits)
           </th><th class="sparkline">
 			&nbsp;
           </th><th
@@ -382,72 +382,31 @@ export default {
 				.then( res => res.json() )
 				.then( details => {
 
-					const prepared_full = details.rows.reduce( ( all, row ) => {
+					const prepared = Object.keys( details ).reduce( ( all, filename ) => {
 
-						all[ row.name ] = all[ row.name ] || { baseline: - 1, parent: - 1, result: - 1 };
-
-						if ( row.runId === details.baselineRunId )
-							all[ row.name ].baseline = row.value;
-						else if ( row.runId === details.parentRunId )
-							all[ row.name ].parent = row.value;
-						else
-							all[ row.name ].result = row.value;
-
-						return all;
-
-					}, {} );
-
-					console.log( { prepared_full } );
-
-					const prepared = Object.keys( prepared_full ).reduce( ( all, key ) => {
+						const { b: baseline, p: parent, r: result } = details[ filename ];
 
 						// if the history is non-existant (-1) or simply not interesting (0), skip this
-						if (
-							[ 0, - 1 ].includes( prepared_full[ key ].baseline ) &&
-							[ 0, - 1 ].includes( prepared_full[ key ].parent ) &&
-							prepared_full[ key ].result === 0
-						)
+						if ( baseline < 0 && parent < 0 && result <= 0 )
 							return all;
 
 						// even with proper history: if we have no valid result for this run -> abort
-						// if ( prepared_full[ key ].result === - 1 )
+						// if ( details[ filename ].result === - 1 )
 						// return all;
 
 						// we proceed
-						all[ key ] = prepared_full[ key ];
+						all[ filename ] = {
 
-						// non-existant values get formatted
-						if ( prepared_full[ key ].result === - 1 )
-							all[ key ].result = '-';
+							// non-existant values get formatted
+							result: ( result >= 0 ) ? result : '-',
+							baseline: ( baseline >= 0 ) ? baseline : '-',
+							parent: ( parent >= 0 ) ? parent : '-',
 
-						if ( prepared_full[ key ].baseline === - 1 )
-							all[ key ].baseline = '-';
+							// placeholder or ratio if mathematically possible
+							baselineDelta: ( result > 0 && baseline > 0 ) ? ( 1 - result / baseline ) : '-',
+							parentDelta: ( result > 0 && parent > 0 ) ? ( 1 - result / parent ) : '-',
 
-						if ( prepared_full[ key ].parent === - 1 )
-							all[ key ].parent = '-';
-
-						// defaults
-						all[ key ].baselineDelta = '-';
-						all[ key ].parentDelta = '-';
-
-						// replace deltas if mathematically possible
-						if ( [ 0, '-' ].includes( prepared_full[ key ].result ) === false ) {
-
-							if ( [ 0, '-' ].includes( prepared_full[ key ].baseline ) === false )
-								all[ key ].baselineDelta = ( 1 - all[ key ].result / all[ key ].baseline );
-
-							if ( [ 0, '-' ].includes( prepared_full[ key ].parent ) === false )
-								all[ key ].parentDelta = ( 1 - all[ key ].result / all[ key ].parent );
-
-						} else {
-
-							if ( [ 0, '-' ].includes( prepared_full[ key ].baseline ) === false )
-								all[ key ].baselineDelta = 1;
-
-							if ( [ 0, '-' ].includes( prepared_full[ key ].parent ) === false )
-								all[ key ].parentDelta = 1;
-
-						}
+						};
 
 						return all;
 

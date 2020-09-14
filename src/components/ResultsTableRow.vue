@@ -253,19 +253,13 @@ export default {
 					data: [],
 					pointStart: 0
 				} ],
-				// tooltip: {
-				// 	headerFormat: '{point.y} @',
-				// 	pointFormat: '<b>{point.name}</b>'
-				// }
 				tooltip: {
 					formatter: function () {
-
-						// console.log( this.point );
 
 						return `${this.point.name}: ${this.point.y}`;
 
 					}
-				},
+				}
 			}
 		};
 
