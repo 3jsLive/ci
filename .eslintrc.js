@@ -1,7 +1,8 @@
 module.exports = {
 	root: true,
 	env: {
-		browser: true
+		browser: true,
+		'cypress/globals': true
 	},
 	extends: [
 		'plugin:vue/essential',
@@ -9,7 +10,8 @@ module.exports = {
 		'mdcs',
 	],
 	plugins: [
-		'vue'
+		'vue',
+		'cypress'
 	],
 	parserOptions: {
 		parser: "babel-eslint",
