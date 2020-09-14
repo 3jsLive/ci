@@ -194,12 +194,12 @@ export default {
 
 				const errorsText = errors.map( err => {
 
-					if ( err.message )
-						return err.message;
+					if ( err.err && err.err.message )
+						return `${err.err.message} triggered by ${err.tag.source}`;
 					else
-						return err;
+						return JSON.stringify( err );
 
-				} ).join( '<br />' );
+				} );
 
 				return errorsText;
 
