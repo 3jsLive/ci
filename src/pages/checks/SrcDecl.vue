@@ -79,15 +79,7 @@ export default {
 
 			return filesAll.reduce( ( all, file ) => {
 
-				let counter;
-
-				if ( this.content.results[ file ].results.length === 0 )
-					counter = 0;
-				else
-					counter = this.content.results[ file ].results[ 0 ].onlySource.methods.length +
-					this.content.results[ file ].results[ 0 ].onlyDecl.methods.length +
-					this.content.results[ file ].results[ 0 ].onlySource.properties.length +
-					this.content.results[ file ].results[ 0 ].onlyDecl.properties.length;
+				const counter = this.content.results[ file ].hits;
 
 				all[ file ] = {
 					hide: ( counter === 0 && this.content.results[ file ].errors.length === 0 ),

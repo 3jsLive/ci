@@ -80,22 +80,10 @@ export default {
 
 			return filesAll.reduce( ( all, file ) => {
 
-				let counter;
-
-				if ( this.content.results[ file ].results.length === 0 )
-					counter = 0;
-				else
-					counter = this.content.results[ file ].results[ 0 ].diff.methods.length +
-					this.content.results[ file ].results[ 0 ].onlyDocs.methods.length +
-					this.content.results[ file ].results[ 0 ].onlyDecl.methods.length +
-					this.content.results[ file ].results[ 0 ].diff.properties.length +
-					this.content.results[ file ].results[ 0 ].onlyDocs.properties.length +
-					this.content.results[ file ].results[ 0 ].onlyDecl.properties.length;
-
 				all[ file ] = {
-					hide: ( counter === 0 && this.content.results[ file ].errors.length === 0 ),
+					hide: ( this.content.results[ file ].hits === 0 && this.content.results[ file ].errors.length === 0 ),
 					name: file,
-					decoration: { text: counter, class: 'bg-warning' },
+					decoration: { text: this.content.results[ file ].hits, class: 'badge-warning' },
 					error: this.content.results[ file ].errors.length > 0,
 					warning: false //this.content[ file ].warning
 				};

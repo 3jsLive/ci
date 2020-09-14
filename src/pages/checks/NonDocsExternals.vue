@@ -80,6 +80,7 @@ export default {
 
 				const data = Object.keys( this.content.results ).reduce( ( all, file ) => {
 
+					// TODO: rewrite to .hits based
 					this.content.results[ file ].results.forEach( link => all.push( { page: file, target: link } ) );
 
 					return all;

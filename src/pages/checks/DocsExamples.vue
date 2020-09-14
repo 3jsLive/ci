@@ -90,26 +90,25 @@ export default {
 			'testData'
 		] ),
 
-		content1: function () {
+		content: function () {
 
 			return this.testData( this.$route.params.run, this.$route.name ) || {};
 
 		},
 
-		tableData1: function () {
+		tableData: function () {
 
-			if ( this.content1 && Object.keys( this.content1 ).includes( 'Loading...' ) === false ) {
+			if ( this.content && Object.keys( this.content ).includes( 'Loading...' ) === false ) {
 
-				return Object.keys( this.content1.results ).reduce( ( all, file ) => {
+				return Object.keys( this.content.results ).reduce( ( all, file ) => {
 
-					// this.content1[ file ].forEach( example => all.push( { page: file, example: example } ) );
 					let element = { page: file, value: { example: false, error: false } };
 
-					if ( this.content1.results[ file ].results.length > 0 )
-						element.value.example = this.content1.results[ file ].results.map( r => r.example ).join( ', ' );
+					if ( this.content.results[ file ].hits > 0 )
+						element.value.example = this.content.results[ file ].results.join( ', ' );
 
-					if ( this.content1.results[ file ].errors.length > 0 )
-						element.value.error = this.content1.results[ file ].errors.map( err => ( err.message ) ? `${err.message} (line ${err.location.start.line})` : err ).join( '<br />' );
+					if ( this.content.results[ file ].errors.length > 0 )
+						element.value.error = this.content.results[ file ].errors.map( err => ( err.message ) ? `${err.message} (line ${err.location.start.line})` : err );
 
 					all.push( element );
 

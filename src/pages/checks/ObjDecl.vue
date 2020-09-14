@@ -118,7 +118,7 @@ export default {
 			return filesAll.reduce( ( all, file ) => {
 
 				let counter;
-
+				// TODO: rewrite to .hits based
 				if ( this.content.results[ file ].results.length === 0 )
 					return all;
 
